@@ -51,6 +51,7 @@ export const validateRegister = z
             }),
 
         email: z.email("Invalid email address").toLowerCase(),
+
         password: z
             .string()
             .regex(
@@ -67,7 +68,7 @@ export const validateRegister = z
             .transform((val) => val.trim().replace(/\s{2,}/g, " "))
             .optional(),
 
-        dateOfBirth: z.coerce.date().transform((dateString, ctx) => {
+        dateOfBirth: z.coerce.string().transform((dateString, ctx) => {
             const date = new Date(dateString);
             if (isNaN(date.getTime())) {
                 ctx.addIssue({
