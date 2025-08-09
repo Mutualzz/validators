@@ -22,6 +22,5 @@
         "dev": "bunchee --watch",
         "typecheck": "tsc --noEmit"
     },
-    "types": "./dist/index.d.ts",
     "version": "0.0.0"
 }

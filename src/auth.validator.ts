@@ -1,15 +1,10 @@
 import emojiRegex from "emojibase-regex";
+import { emailRegex, pswdRegex } from "regexes";
 import { z } from "zod";
 
-// Regex for email validation
-const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-// Regex for password validation (at least 8 characters, 1 uppercase, 1 lowercase, 1 number)
-const pswdRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
-
 // Disallowed substrings in usernames
-const disallowedUsernameSubstrings = ["@", "#", ":", "```", "mutualzz"];
-const notAllowedUsernames = ["everyone", "here"];
+const disallowedUsernameSubstrings = ["@", "#", ":", "```"];
+const notAllowedUsernames = ["everyone", "here", "mutualzz"];
 
 // Zero-width and non-rendering character matcher
 const invisibleCharsRegex = /[\u200B-\u200D\uFEFF]/;
@@ -36,18 +31,17 @@ export const validateRegister = z
                         val.includes(sub),
                     ),
                 {
-                    message:
-                        "Username contains disallowed characters or substrings",
+                    error: "Please only use numbers, letters, underscores, or periods",
                 },
             )
             .refine((val) => !notAllowedUsernames.includes(val), {
-                message: "This username is not allowed and cannot be used",
+                error: ({ input }) => `"${input}" is not allowed`,
             })
             .refine((val) => !invisibleCharsRegex.test(val), {
-                message: "Username contains invisible or invalid characters",
+                error: "Username contains invisible or invalid characters",
             })
             .refine((val) => !emailRegex.test(val), {
-                message: "Username cannot be an email",
+                error: "Username cannot be an email",
             }),
 
         email: z.email("Invalid email address").toLowerCase(),
@@ -68,20 +62,10 @@ export const validateRegister = z
             .transform((val) => val.trim().replace(/\s{2,}/g, " "))
             .optional(),
 
-        dateOfBirth: z.coerce.string().transform((dateString, ctx) => {
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) {
-                ctx.addIssue({
-                    code: z.ZodIssueCode.custom,
-                    message: "Invalid date",
-                });
-            }
-
-            return date;
-        }),
+        dateOfBirth: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords do not match",
+        error: "Passwords do not match",
         path: ["confirmPassword"],
     })
     .refine(
@@ -90,7 +74,7 @@ export const validateRegister = z
             return new Date().getFullYear() - dateOfBirth.getFullYear() >= 13;
         },
         {
-            message: "You must be at least 13 years old to register",
+            error: "You must be at least 13 years old to register",
             path: ["dateOfBirth"],
         },
     );
