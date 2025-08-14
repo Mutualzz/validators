@@ -1,22 +1,11 @@
-import emojiRegex from "emojibase-regex";
-import { emailRegex, pswdRegex } from "regexes";
 import { z } from "zod";
-
-// Disallowed substrings in usernames
-const disallowedUsernameSubstrings = ["@", "#", ":", "```"];
-const notAllowedUsernames = ["everyone", "here", "mutualzz"];
-
-// Zero-width and non-rendering character matcher
-const invisibleCharsRegex = /[\u200B-\u200D\uFEFF]/;
-
-// Sanitize username by trimming whitespace and replacing multiple spaces with a single space
-const sanitizeUsername = (input: string) =>
-    input
-        .replace(emojiRegex, "") // remove emojis
-        .replace(/[\u200B-\u200D\uFEFF]/g, "") // remove zero-width
-        .trim()
-        .replace(/\s{2,}/g, " ") // collapse spaces
-        .toLowerCase();
+import {
+    disallowedNameSubstrings,
+    invisibleCharsRegex,
+    notAllowedNames,
+} from "./constants";
+import { emailRegex, pswdRegex } from "./regexes";
+import { sanitizeName } from "./utils";
 
 export const validateRegister = z
     .object({
@@ -24,17 +13,15 @@ export const validateRegister = z
             .string()
             .min(2, "Username must be at least 2 characters long")
             .max(32, "Username must be at most 32 characters long")
-            .transform((val) => sanitizeUsername(val.toLowerCase()))
+            .transform((val) => sanitizeName(val.toLowerCase()))
             .refine(
                 (val) =>
-                    !disallowedUsernameSubstrings.some((sub) =>
-                        val.includes(sub),
-                    ),
+                    !disallowedNameSubstrings.some((sub) => val.includes(sub)),
                 {
                     error: "Please only use numbers, letters, underscores, or periods",
                 },
             )
-            .refine((val) => !notAllowedUsernames.includes(val), {
+            .refine((val) => !notAllowedNames.includes(val), {
                 error: ({ input }) => `"${input}" is not allowed`,
             })
             .refine((val) => !invisibleCharsRegex.test(val), {
