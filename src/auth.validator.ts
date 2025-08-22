@@ -13,6 +13,7 @@ export const validateRegister = z
             .string()
             .min(2, "Username must be at least 2 characters long")
             .max(32, "Username must be at most 32 characters long")
+            .toLowerCase()
             .transform((val) => sanitizeName(val.toLowerCase()))
             .refine(
                 (val) =>
@@ -67,9 +68,7 @@ export const validateRegister = z
     );
 
 export const validateLogin = z.object({
-    username: z.string().optional(),
-
-    email: z.string().optional(),
-
+    username: z.string().toLowerCase().optional(),
+    email: z.email().toLowerCase().optional(),
     password: z.string(),
 });
