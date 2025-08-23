@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { colorLikeRegex } from "../dist";
 import {
     disallowedNameSubstrings,
     invisibleCharsRegex,
@@ -7,18 +8,18 @@ import {
 import { colorValueRegex, emailRegex } from "./regexes";
 import { sanitizeName } from "./utils";
 
-const validateColor = z.string().regex(colorValueRegex, {
+const validateColor = z.string().regex(colorLikeRegex, {
     error: ({ input }) =>
         input === ""
             ? "Color cannot be empty"
-            : `"${input}" is not a valid color or it cannot be a gradient`,
+            : `"${input}" is not a valid color`,
 });
 
 const validateNonGradientColor = z.string().regex(colorValueRegex, {
     error: ({ input }) =>
         input === ""
             ? "Color cannot be empty"
-            : `"${input}" is not a valid color`,
+            : `"${input}" is not a valid color or it cannot be a gradient`,
 });
 
 export const validateThemePut = z.object({
