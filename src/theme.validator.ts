@@ -1,11 +1,10 @@
 import { z } from "zod";
-import { colorLikeRegex } from "../dist";
 import {
     disallowedNameSubstrings,
     invisibleCharsRegex,
     notAllowedNames,
 } from "./constants";
-import { colorValueRegex, emailRegex } from "./regexes";
+import { colorLikeRegex, colorValueRegex, emailRegex } from "./regexes";
 import { sanitizeName } from "./utils";
 
 const validateColor = z.string().regex(colorLikeRegex, {
