@@ -4,10 +4,17 @@ import {
     invisibleCharsRegex,
     notAllowedNames,
 } from "./constants";
-import { colorLikeRegex, emailRegex } from "./regexes";
+import { colorValueRegex, emailRegex } from "./regexes";
 import { sanitizeName } from "./utils";
 
-const validateColor = z.string().regex(colorLikeRegex, {
+const validateColor = z.string().regex(colorValueRegex, {
+    error: ({ input }) =>
+        input === ""
+            ? "Color cannot be empty"
+            : `"${input}" is not a valid color or it cannot be a gradient`,
+});
+
+const validateNonGradientColor = z.string().regex(colorValueRegex, {
     error: ({ input }) =>
         input === ""
             ? "Color cannot be empty"
@@ -39,30 +46,31 @@ export const validateThemePut = z.object({
     description: z.string().optional(),
 
     type: z.enum(["dark", "light"], "Invalid Theme type provided"),
+    mode: z.enum(["normal", "gradient"], "Invalid Theme mode provided"),
 
     colors: z.object({
         common: z.object({
-            white: validateColor,
-            black: validateColor,
+            white: validateNonGradientColor,
+            black: validateNonGradientColor,
         }),
 
-        primary: validateColor,
-        neutral: validateColor,
+        primary: validateNonGradientColor,
+        neutral: validateNonGradientColor,
         background: validateColor,
         surface: validateColor,
 
-        danger: validateColor,
-        info: validateColor,
-        success: validateColor,
-        warning: validateColor,
+        danger: validateNonGradientColor,
+        info: validateNonGradientColor,
+        success: validateNonGradientColor,
+        warning: validateNonGradientColor,
     }),
 
     typography: z.object({
         colors: z.object({
-            primary: validateColor,
-            secondary: validateColor,
-            accent: validateColor,
-            muted: validateColor,
+            primary: validateNonGradientColor,
+            secondary: validateNonGradientColor,
+            accent: validateNonGradientColor,
+            muted: validateNonGradientColor,
         }),
     }),
 });
