@@ -4,6 +4,7 @@
         "zod": "^4.0.15"
     },
     "devDependencies": {
+        "@mutualzz/types": "workspace:*",
         "bunchee": "^6.6.0"
     },
     "exports": {
