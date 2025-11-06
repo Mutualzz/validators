@@ -45,6 +45,7 @@ export const validateThemePut = z.object({
 
     description: z.string().optional(),
 
+    adaptive: z.boolean(),
     type: z.enum(["dark", "light"], "Invalid Theme type provided"),
     style: z.enum(["normal", "gradient"], "Invalid Theme style provided"),
 
