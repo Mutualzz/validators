@@ -22,5 +22,6 @@
         "build": "pnpm typecheck && bunchee",
         "dev": "bunchee --watch",
         "typecheck": "tsc --noEmit"
-    }
+    },
+    "types": "./dist/index.d.ts"
 }
