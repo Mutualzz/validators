@@ -14,6 +14,7 @@ export const validateRegister = z
             .min(2, "Username must be at least 2 characters long")
             .max(32, "Username must be at most 32 characters long")
             .toLowerCase()
+            .trim()
             .transform((val) => sanitizeName(val.toLowerCase()))
             .refine(
                 (val) =>
@@ -32,10 +33,11 @@ export const validateRegister = z
                 error: "Username cannot be an email",
             }),
 
-        email: z.email("Invalid email address").toLowerCase(),
+        email: z.email("Invalid email address").trim().toLowerCase(),
 
         password: z
             .string()
+            .trim()
             .regex(
                 pswdRegex,
                 "Password is too weak, must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number",
@@ -45,6 +47,7 @@ export const validateRegister = z
 
         globalName: z
             .string()
+            .trim()
             .min(1, "Nickname must be at least 1 character")
             .max(32, "Nickname must be at most 32 characters")
             .transform((val) => val.trim().replace(/\s{2,}/g, " "))
@@ -68,7 +71,7 @@ export const validateRegister = z
     );
 
 export const validateLogin = z.object({
-    username: z.string().toLowerCase().optional(),
-    email: z.email().toLowerCase().optional(),
-    password: z.string(),
+    username: z.string().trim().toLowerCase().optional(),
+    email: z.email().trim().toLowerCase().optional(),
+    password: z.string().trim(),
 });

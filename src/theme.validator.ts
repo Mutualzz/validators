@@ -25,7 +25,7 @@ export const validateThemePut = z.object({
     name: z
         .string()
         .min(2, "Theme name must be atleast 2 characters long")
-        .max(32, "Name must be atleast 32 characters long")
+        .max(32, "Theme name must be atleast 32 characters long")
         .transform((val) => sanitizeName(val, false))
         .refine(
             (val) => !disallowedNameSubstrings.some((sub) => val.includes(sub)),
@@ -75,3 +75,8 @@ export const validateThemePut = z.object({
         }),
     }),
 });
+
+export const validateThemePatchQuery = z.object({
+    id: z.string({ error: "Theme ID is required" }),
+});
+export const validateThemePatchBody = validateThemePut.partial();

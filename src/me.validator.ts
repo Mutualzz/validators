@@ -13,6 +13,7 @@ export const validateMePatch = z.object({
         .string()
         .min(2, "Username must be at least 2 characters long")
         .max(32, "Username must be at most 32 characters long")
+        .trim()
         .toLowerCase()
         .transform((val) => sanitizeName(val.toLowerCase()))
         .refine(
@@ -41,8 +42,19 @@ export const validateMePatch = z.object({
 
     globalName: z
         .string()
+        .trim()
         .min(1, "Nickname must be at least 1 character")
         .max(32, "Nickname must be at most 32 characters")
         .transform((val) => val.trim().replace(/\s{2,}/g, " "))
         .optional(),
+});
+
+export const validateMeSettingsPatch = z.object({
+    currentTheme: z.string().trim().optional(),
+    preferredMode: z.enum(["feed", "spaces"]).optional(),
+    spacePositions: z.array(z.string().trim()).optional(),
+});
+
+export const validatePreviousAvatarDelete = z.object({
+    avatar: z.string({ error: "Avatar hash is required" }),
 });
