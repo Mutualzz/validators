@@ -1,4 +1,3 @@
-import { defaultAvatars } from "@mutualzz/types";
 import z from "zod";
 import {
     disallowedNameSubstrings,
@@ -33,10 +32,15 @@ export const validateMePatch = z.object({
         })
         .optional(),
 
-    avatar: z.any().optional(),
+    avatar: z.any().nullable().optional(),
     defaultAvatar: z
-        .enum(defaultAvatars, {
-            error: (input) => `"${input}" is not a valid default avatar`,
+        .object({
+            type: z
+                .number()
+                .min(0, "Default avatar type must be between 0 and 5")
+                .max(5, "Default avatar type must be between 0 and 5")
+                .optional(),
+            color: z.string().nullable().optional(),
         })
         .optional(),
 
@@ -50,7 +54,8 @@ export const validateMePatch = z.object({
 });
 
 export const validateMeSettingsPatch = z.object({
-    currentTheme: z.string().trim().optional(),
+    currentTheme: z.string().trim().nullable().optional(),
+    currentIcon: z.string().trim().nullable().optional(),
     preferredMode: z.enum(["feed", "spaces"]).optional(),
     spacePositions: z.array(z.string().trim()).optional(),
 });

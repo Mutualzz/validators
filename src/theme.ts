@@ -79,4 +79,5 @@ export const validateThemePut = z.object({
 export const validateThemePatchQuery = z.object({
     id: z.string({ error: "Theme ID is required" }),
 });
+
 export const validateThemePatchBody = validateThemePut.partial();

@@ -1,9 +1,12 @@
-export * from "./auth.validator";
+export * from "./auth";
 export * from "./constants";
 export * from "./regexes";
-export * from "./theme.validator";
+export * from "./theme";
 export * from "./utils";
 
-export * from "./me.validator";
-export * from "./space.validator";
-export * from "./user.validator";
+export * from "./channel";
+export * from "./invites";
+export * from "./me";
+export * from "./messages";
+export * from "./space";
+export * from "./user";

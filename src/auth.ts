@@ -10,7 +10,7 @@ import { sanitizeName } from "./utils";
 export const validateRegister = z
     .object({
         username: z
-            .string()
+            .string({ error: "Username is required" })
             .min(2, "Username must be at least 2 characters long")
             .max(32, "Username must be at most 32 characters long")
             .toLowerCase()
@@ -36,24 +36,26 @@ export const validateRegister = z
         email: z.email("Invalid email address").trim().toLowerCase(),
 
         password: z
-            .string()
+            .string({ error: "Password is required" })
             .trim()
             .regex(
                 pswdRegex,
                 "Password is too weak, must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number",
             ),
 
-        confirmPassword: z.string(),
+        confirmPassword: z
+            .string({ error: "Confirm Password is required" })
+            .trim(),
 
         globalName: z
-            .string()
+            .string({ error: "Invalid display name" })
             .trim()
-            .min(1, "Nickname must be at least 1 character")
-            .max(32, "Nickname must be at most 32 characters")
+            .min(1, "Display name must be at least 1 character")
+            .max(32, "Display name must be at most 32 characters")
             .transform((val) => val.trim().replace(/\s{2,}/g, " "))
             .optional(),
 
-        dateOfBirth: z.string(),
+        dateOfBirth: z.string({ error: "Date of Birth is required" }),
     })
     .refine((data) => data.password === data.confirmPassword, {
         error: "Passwords do not match",
@@ -71,7 +73,15 @@ export const validateRegister = z
     );
 
 export const validateLogin = z.object({
-    username: z.string().trim().toLowerCase().optional(),
-    email: z.email().trim().toLowerCase().optional(),
-    password: z.string().trim(),
+    username: z
+        .string({ error: "Invalid username" })
+        .trim()
+        .toLowerCase()
+        .optional(),
+    email: z
+        .email({ error: "Invalid email address" })
+        .trim()
+        .toLowerCase()
+        .optional(),
+    password: z.string({ error: "Password is required" }).trim(),
 });
