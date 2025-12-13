@@ -7,7 +7,7 @@ import {
 import { emailRegex } from "./regexes";
 import { sanitizeName } from "./utils";
 
-export const validateMePatch = z.object({
+export const validateMeUpdate = z.object({
     username: z
         .string()
         .min(2, "Username must be at least 2 characters long")
@@ -53,7 +53,7 @@ export const validateMePatch = z.object({
         .optional(),
 });
 
-export const validateMeSettingsPatch = z.object({
+export const validateMeSettingsUpdate = z.object({
     currentTheme: z.string().trim().nullable().optional(),
     currentIcon: z.string().trim().nullable().optional(),
     preferredMode: z.enum(["feed", "spaces"]).optional(),

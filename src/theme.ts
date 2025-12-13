@@ -21,7 +21,7 @@ const validateNonGradientColor = z.string().regex(colorValueRegex, {
             : `"${input}" is not a valid color or it cannot be a gradient`,
 });
 
-export const validateThemePut = z.object({
+export const validateThemeCreate = z.object({
     name: z
         .string()
         .min(2, "Theme name must be atleast 2 characters long")
@@ -76,8 +76,8 @@ export const validateThemePut = z.object({
     }),
 });
 
-export const validateThemePatchQuery = z.object({
+export const validateThemeUpdateQuery = z.object({
     id: z.string({ error: "Theme ID is required" }),
 });
 
-export const validateThemePatchBody = validateThemePut.partial();
+export const validateThemeUpdateBody = validateThemeCreate.partial();

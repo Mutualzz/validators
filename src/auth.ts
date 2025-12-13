@@ -11,8 +11,12 @@ export const validateRegister = z
     .object({
         username: z
             .string({ error: "Username is required" })
-            .min(2, "Username must be at least 2 characters long")
-            .max(32, "Username must be at most 32 characters long")
+            .min(2, {
+                error: "Username must be at least 2 characters long",
+            })
+            .max(32, {
+                error: "Username must be at most 32 characters long",
+            })
             .toLowerCase()
             .trim()
             .transform((val) => sanitizeName(val.toLowerCase()))
@@ -38,10 +42,9 @@ export const validateRegister = z
         password: z
             .string({ error: "Password is required" })
             .trim()
-            .regex(
-                pswdRegex,
-                "Password is too weak, must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number",
-            ),
+            .regex(pswdRegex, {
+                error: "Password is too weak, must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number",
+            }),
 
         confirmPassword: z
             .string({ error: "Confirm Password is required" })
@@ -50,8 +53,12 @@ export const validateRegister = z
         globalName: z
             .string({ error: "Invalid display name" })
             .trim()
-            .min(1, "Display name must be at least 1 character")
-            .max(32, "Display name must be at most 32 characters")
+            .min(1, {
+                error: "Display name must be at least 1 character",
+            })
+            .max(32, {
+                error: "Display name must be at most 32 characters",
+            })
             .transform((val) => val.trim().replace(/\s{2,}/g, " "))
             .optional(),
 
