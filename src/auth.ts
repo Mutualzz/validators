@@ -62,7 +62,7 @@ export const validateRegister = z
             .transform((val) => val.trim().replace(/\s{2,}/g, " "))
             .optional(),
 
-        dateOfBirth: z.string({ error: "Date of Birth is required" }),
+        dateOfBirth: z.union([z.string(), z.date()]),
     })
     .refine((data) => data.password === data.confirmPassword, {
         error: "Passwords do not match",
@@ -70,7 +70,11 @@ export const validateRegister = z
     })
     .refine(
         (data) => {
-            const dateOfBirth = new Date(data.dateOfBirth);
+            let dateOfBirth: Date;
+            if (data.dateOfBirth instanceof Date)
+                dateOfBirth = data.dateOfBirth;
+            else dateOfBirth = new Date(data.dateOfBirth);
+
             return new Date().getFullYear() - dateOfBirth.getFullYear() >= 13;
         },
         {
