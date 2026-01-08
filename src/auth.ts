@@ -62,21 +62,19 @@ export const validateRegister = z
             .transform((val) => val.trim().replace(/\s{2,}/g, " "))
             .optional(),
 
-        dateOfBirth: z.union([z.string(), z.date()]),
+        dateOfBirth: z.union([z.string(), z.date()]).transform((val) => {
+            if (val instanceof Date) return val.toDateString();
+            return new Date(val).toDateString();
+        }),
     })
     .refine((data) => data.password === data.confirmPassword, {
         error: "Passwords do not match",
         path: ["confirmPassword"],
     })
     .refine(
-        (data) => {
-            let dateOfBirth: Date;
-            if (data.dateOfBirth instanceof Date)
-                dateOfBirth = data.dateOfBirth;
-            else dateOfBirth = new Date(data.dateOfBirth);
-
-            return new Date().getFullYear() - dateOfBirth.getFullYear() >= 13;
-        },
+        ({ dateOfBirth }) =>
+            new Date().getFullYear() - new Date(dateOfBirth).getFullYear() >=
+            13,
         {
             error: "You must be at least 13 years old to register",
             path: ["dateOfBirth"],
