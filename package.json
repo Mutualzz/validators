@@ -1,11 +1,11 @@
 {
     "dependencies": {
         "emojibase-regex": "^17.0.0",
-        "zod": "^4.3.5"
+        "zod": "^4.3.6"
     },
     "devDependencies": {
         "@mutualzz/types": "workspace:*",
-        "bunchee": "^6.9.3"
+        "bunchee": "^6.9.4"
     },
     "exports": {
         ".": {
