@@ -15,6 +15,7 @@ export const validateMessageBodyPut = z.object({
         .string()
         .min(1, "Message content must be at least 1 character long")
         .max(2000, "Message content cannot exceed 2000 characters")
-        .trim(),
+        .trim()
+        .optional(),
     nonce: z.string().optional(),
 });
