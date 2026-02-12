@@ -22,6 +22,8 @@ export const validateChannelBodyCreate = z.object({
 
     parentId: z.string().optional(),
     spaceId: z.string().optional(),
+    ownerId: z.string().optional(),
+    recipientIds: z.array(z.string()).optional(),
 });
 
 // PATCH
@@ -57,11 +59,14 @@ export const validateChannelBodyUpdate = z.object({
     spaceId: z.string().optional(),
 });
 
-export const validateChannelBulkBodyPatch = z.array(
-    validateChannelBodyUpdate.extend({
-        id: z.string({ error: "Invalid Channel ID" }),
-    }),
-);
+export const validateChannelBulkBodyPatch = z.object({
+    spaceId: z.string(),
+    channels: z.array(
+        validateChannelBodyUpdate.extend({
+            id: z.string({ error: "Invalid Channel ID" }),
+        }),
+    ),
+});
 
 // DELETE
 export const validateChannelParamsDelete = z.object({
