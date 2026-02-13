@@ -12,3 +12,7 @@ export const fileValidator = z.object({
         .max(5 * 1024 * 1024, "File size exceeds the limit of 5MB"),
     buffer: z.instanceof(Buffer),
 });
+
+export const validateSpaceParam = z.object({
+    spaceId: z.string({ error: "Invalid space ID" }).trim(),
+});
