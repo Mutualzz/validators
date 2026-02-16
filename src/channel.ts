@@ -20,10 +20,10 @@ export const validateChannelBodyCreate = z.object({
         .min(0, "Invalid channel type provided")
         .max(4, "Invalid channel type provided"),
 
-    parentId: z.string().optional(),
-    spaceId: z.string().optional(),
-    ownerId: z.string().optional(),
-    recipientIds: z.array(z.string()).optional(),
+    parentId: z.string().optional().nullable(),
+    spaceId: z.string().optional().nullable(),
+    ownerId: z.string().optional().nullable(),
+    recipientIds: z.array(z.string()).optional().nullable(),
 });
 
 // PATCH
@@ -54,7 +54,11 @@ export const validateChannelBodyUpdate = z.object({
 
     nsfw: z.boolean().optional(),
 
-    position: z.number().int().min(0).optional(),
+    position: z
+        .number({ error: "Invalid channel position" })
+        .int()
+        .nonnegative()
+        .optional(),
 
     spaceId: z.string().optional(),
 });

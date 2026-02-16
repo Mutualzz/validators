@@ -12,3 +12,4 @@ export * from "./members";
 export * from "./messages";
 export * from "./space";
 export * from "./user";
+export * from "./role";
