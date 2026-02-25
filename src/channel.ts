@@ -10,20 +10,37 @@ export const validateChannelParamsGet = z.object({
 export const validateChannelBodyCreate = z.object({
     name: z
         .string({ error: "Channel name is required" })
-        .min(1, "Channel name must be atleast 1 characters long")
-        .max(100, "Channel name must be atleast 100 characters long")
+        .min(1, "Channel name must be at least 1 characters long")
+        .max(100, "Channel name must be at least 100 characters long")
         .refine((val) => !emailRegex.test(val), {
             error: "Name cannot be an email",
         }),
-    type: z
-        .int({ error: "Channel type is required" })
-        .min(0, "Invalid channel type provided")
-        .max(4, "Invalid channel type provided"),
+    type: z.string().refine((val) => ["0", "1", "2", "3", "4"].includes(val), {
+        error: "Invalid channel type provided",
+    }),
 
     parentId: z.string().optional().nullable(),
     spaceId: z.string().optional().nullable(),
     ownerId: z.string().optional().nullable(),
     recipientIds: z.array(z.string()).optional().nullable(),
+
+    crop: z
+        .object({
+            x: z.number().min(0, {
+                error: "Crop x must be at least 0",
+            }),
+            y: z.number().min(0, {
+                error: "Crop y must be at least 0",
+            }),
+            width: z.number().min(1, {
+                error: "Crop width must be at least 1",
+            }),
+            height: z.number().min(1, {
+                error: "Crop height must be at least 1",
+            }),
+        })
+        .nullable()
+        .optional(),
 });
 
 // PATCH
