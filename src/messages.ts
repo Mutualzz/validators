@@ -5,7 +5,7 @@ export const validateMessageParamsPut = z.object({
     channelId: z.string({ error: "Invalid Channel ID" }),
 });
 
-export const validateMessageParamsPatch = z.object({
+export const validateMessageParamsModify = z.object({
     channelId: z.string({ error: "Invalid Channel ID" }),
     messageId: z.string({ error: "Invalid Message ID" }),
 });
