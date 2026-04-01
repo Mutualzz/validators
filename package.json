@@ -5,6 +5,7 @@
     },
     "devDependencies": {
         "@mutualzz/types": "workspace:*",
+        "@types/node":"^25.5.0",
         "bunchee": "^6.9.4"
     },
     "exports": {

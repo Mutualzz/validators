@@ -1,5 +1,4 @@
 import z from "zod";
-import { Buffer } from "buffer";
 
 export const fileValidator = z.object({
     fieldname: z.string(),
