@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const fileValidator = z.object({
+export const imageFileValidator = z.object({
     fieldname: z.string(),
     originalname: z.string().min(1),
     encoding: z.string(),
