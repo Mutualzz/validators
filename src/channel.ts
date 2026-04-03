@@ -24,8 +24,6 @@ export const validateChannelBodyCreate = z.object({
     ownerId: z.string().optional().nullable(),
     recipientIds: z.array(z.string()).optional().nullable(),
 
-    roundedIcon: z.boolean().optional(),
-
     crop: z
         .object({
             x: z.number().min(0, {
@@ -40,6 +38,7 @@ export const validateChannelBodyCreate = z.object({
             height: z.number().min(1, {
                 error: "Crop height must be at least 1",
             }),
+            rounded: z.boolean().optional(),
         })
         .nullable()
         .optional(),
