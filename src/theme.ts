@@ -63,7 +63,7 @@ export const validateThemeCreate = z.object({
 });
 
 export const validateThemeUpdateQuery = z.object({
-    id: z.string({ error: "Theme ID is required" }),
+    themeId: z.string({ error: "Theme ID is required" }),
 });
 
 export const validateThemeUpdateBody = validateThemeCreate.partial();

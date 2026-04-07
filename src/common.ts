@@ -8,7 +8,7 @@ export const imageFileValidator = z.object({
     size: z
         .number()
         .min(1, "File size must be greater than 0 bytes")
-        .max(5 * 1024 * 1024, "File size exceeds the limit of 5MB"),
+        .max(50 * 1024 * 1024, "File size exceeds the limit of 50MB"),
     buffer: z.instanceof(Uint8Array),
 });
 

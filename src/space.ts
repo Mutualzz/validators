@@ -35,7 +35,7 @@ export const validateSpaceCreate = z.object({
 });
 
 export const validateSpaceDeleteParams = z.object({
-    id: z.string({ error: "Invalid space ID" }).trim(),
+    spaceId: z.string({ error: "Invalid space ID" }).trim(),
 });
 
 export const validateSpaceGetBulkQuery = z.object({
