@@ -6,7 +6,7 @@ export const validateExpressionPutBody = z.object({
     name: z
         .string()
         .trim()
-        .refine((val) => val.replaceAll(" ", "_")),
+        .refine((val) => val.replaceAll(" ", "_").toLowerCase()),
     type: z.string().refine((val) => ["0", "1"].includes(val), {
         error: "Invalid expression type provided",
     }),
