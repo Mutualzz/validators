@@ -4,7 +4,7 @@ import {
     invisibleCharsRegex,
     notAllowedNames,
 } from "./constants";
-import { emailRegex } from "./regexes";
+import { emailRegex, pswdRegex } from "./regexes";
 import { sanitizeName } from "./utils";
 
 export const validateMeUpdate = z.object({
@@ -65,3 +65,34 @@ export const validateMeSettingsUpdate = z.object({
 export const validatePreviousAvatarDelete = z.object({
     avatar: z.string({ error: "Avatar hash is required" }),
 });
+
+export const validateVerifyEmail = z.object({
+    code: z
+        .string()
+        .length(6, "Verification code must be exactly 6 characters long"),
+});
+
+export const validateChangePassword = z
+    .object({
+        currentPassword: z
+            .string({ error: "Current Password is required" })
+            .trim()
+            .regex(pswdRegex, {
+                error: "Password is too weak, must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number",
+            }),
+
+        newPassword: z
+            .string({ error: "New Password is required" })
+            .trim()
+            .regex(pswdRegex, {
+                error: "Password is too weak, must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number",
+            }),
+
+        confirmNewPassword: z
+            .string({ error: "Confirm new Password is required" })
+            .trim(),
+    })
+    .refine((data) => data.newPassword === data.confirmNewPassword, {
+        error: "Passwords do not match",
+        path: ["newPassword", "confirmNewPassword"],
+    });

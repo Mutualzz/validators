@@ -94,3 +94,27 @@ export const validateLogin = z.object({
         .optional(),
     password: z.string({ error: "Password is required" }).trim(),
 });
+
+export const validateForgotPassword = z.object({
+    username: z
+        .string({ error: "Invalid username" })
+        .trim()
+        .toLowerCase()
+        .optional(),
+    email: z
+        .email({ error: "Invalid email address" })
+        .trim()
+        .toLowerCase()
+        .optional(),
+});
+
+export const validateResetPassword = z
+    .object({
+        token: z.string().trim(),
+        password: z.string().trim(),
+        confirmPassword: z.string().trim(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        error: "Passwords do not match",
+        path: ["confirmPassword"],
+    });
