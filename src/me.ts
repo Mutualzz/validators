@@ -1,13 +1,9 @@
 import z from "zod";
-import {
-    disallowedNameSubstrings,
-    invisibleCharsRegex,
-    notAllowedNames,
-} from "./constants";
+import { disallowedNameSubstrings, invisibleCharsRegex, notAllowedNames, } from "./constants";
 import { emailRegex, pswdRegex } from "./regexes";
 import { sanitizeName } from "./utils";
 
-export const validateMeUpdate = z.object({
+export const validateUsernameChange = z.object({
     username: z
         .string()
         .min(2, "Username must be at least 2 characters long")
@@ -29,9 +25,17 @@ export const validateMeUpdate = z.object({
         })
         .refine((val) => !emailRegex.test(val), {
             error: "Username cannot be an email",
-        })
-        .optional(),
+        }),
 
+    password: z
+        .string({ error: "Password is required" })
+        .trim()
+        .regex(pswdRegex, {
+            error: "Password is too weak, must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number",
+        }),
+});
+
+export const validateMeUpdate = z.object({
     avatar: z.any().nullable().optional(),
     defaultAvatar: z
         .object({
