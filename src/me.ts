@@ -96,3 +96,11 @@ export const validateChangePassword = z
         error: "Passwords do not match",
         path: ["newPassword", "confirmNewPassword"],
     });
+
+export const validateDmChannelCreateBody = z.object({
+    recipientId: z.string().trim(),
+});
+
+export const validateRelationshipRequest = z.object({
+    userId: z.string().trim(),
+});

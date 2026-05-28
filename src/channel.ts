@@ -20,9 +20,7 @@ export const validateChannelBodyCreate = z.object({
     }),
 
     parentId: z.string().optional().nullable(),
-    spaceId: z.string().optional().nullable(),
-    ownerId: z.string().optional().nullable(),
-    recipientIds: z.array(z.string()).optional().nullable(),
+    spaceId: z.string(),
 
     crop: z
         .object({
