@@ -1,5 +1,9 @@
 import z from "zod";
-import { disallowedNameSubstrings, invisibleCharsRegex, notAllowedNames, } from "./constants";
+import {
+    disallowedNameSubstrings,
+    invisibleCharsRegex,
+    notAllowedNames,
+} from "./constants";
 import { emailRegex, pswdRegex } from "./regexes";
 import { sanitizeName } from "./utils";
 
