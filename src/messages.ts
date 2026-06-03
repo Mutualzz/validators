@@ -18,3 +18,8 @@ export const validateMessageBodyPut = z.object({
         .optional(),
     nonce: z.string().optional(),
 });
+
+export const validateMessageAckParams = z.object({
+    channelId: z.string({ error: "Invalid Channel ID" }),
+    messageId: z.string({ error: "Invalid Message ID" }),
+});

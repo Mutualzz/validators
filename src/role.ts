@@ -21,7 +21,8 @@ export const validateRoleUpdate = z.object({
         .optional(),
     mentionable: z.boolean().optional(),
     hoist: z.boolean().optional(),
-    permissions: z.string({ error: "Invalid bitfield" }).optional(),
+    allow: z.string({ error: "Invalid bitfield" }).optional(),
+    deny: z.string({ error: "Invalid bitfield" }).optional(),
 });
 
 export const validateRoleMemberParams = z.object({
