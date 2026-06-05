@@ -68,6 +68,8 @@ export const validateMeSettingsUpdate = z.object({
     spacePositions: z.array(z.string().trim()).optional(),
     preferredSelfMute: z.boolean().optional(),
     preferredSelfDeaf: z.boolean().optional(),
+    favoriteEmotes: z.array(z.string()).optional(),
+    favoriteGifs: z.array(z.string()).optional(),
 });
 
 export const validatePreviousAvatarDelete = z.object({
