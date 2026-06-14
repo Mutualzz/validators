@@ -1,5 +1,31 @@
 import z from "zod";
 import { emailRegex } from "./regexes";
+import { sanitizeDisplayText } from "./utils";
+
+const channelNameSchema = z
+  .string()
+  .trim()
+  .transform(sanitizeDisplayText)
+  .refine((val) => val.length >= 1, {
+    message: "Channel name must be at least 1 characters long",
+  })
+  .refine((val) => val.length <= 100, {
+    message: "Channel name must be at most 100 characters long",
+  })
+  .refine((val) => !emailRegex.test(val), {
+    error: "Name cannot be an email",
+  });
+
+const channelTopicSchema = z
+  .string()
+  .trim()
+  .transform(sanitizeDisplayText)
+  .refine((val) => val.length <= 250, {
+    message: "Topic cannot be longer than 250 characters",
+  })
+  .refine((val) => !emailRegex.test(val), {
+    error: "Topic cannot contain an email",
+  });
 
 // GET
 export const validateChannelParamsGet = z.object({
@@ -8,13 +34,7 @@ export const validateChannelParamsGet = z.object({
 
 // POST
 export const validateChannelBodyCreate = z.object({
-  name: z
-    .string({ error: "Channel name is required" })
-    .min(1, "Channel name must be at least 1 characters long")
-    .max(100, "Channel name must be at least 100 characters long")
-    .refine((val) => !emailRegex.test(val), {
-      error: "Name cannot be an email",
-    }),
+  name: channelNameSchema,
   type: z.string().refine((val) => ["0", "1", "2", "3", "4"].includes(val), {
     error: "Invalid channel type provided",
   }),
@@ -48,23 +68,9 @@ export const validateChannelParamsUpdate = z.object({
 });
 
 export const validateChannelBodyUpdate = z.object({
-  name: z
-    .string()
-    .min(1, "Channel name must be atleast 1 characters long")
-    .max(100, "Channel name must be atleast 100 characters long")
-    .refine((val) => !emailRegex.test(val), {
-      error: "Name cannot be an email",
-    })
-    .optional(),
+  name: channelNameSchema.optional(),
 
-  topic: z
-    .string()
-    .max(250, "Topic cannot be longer than 250 characters")
-    .refine((val) => !emailRegex.test(val), {
-      error: "Topic cannot contain an email",
-    })
-    .nullable()
-    .optional(),
+  topic: z.union([channelTopicSchema, z.null()]).optional(),
 
   parentId: z.string().nullable().optional(),
 

@@ -5,7 +5,7 @@ import {
     notAllowedNames,
 } from "./constants";
 import { emailRegex } from "./regexes";
-import { sanitizeName, validateColor, validateNonGradientColor } from "./utils";
+import { sanitizeName, validateColor, validateNonGradientColor, sanitizeDisplayText } from "./utils";
 
 export const validateThemeCreate = z.object({
     name: z
@@ -29,7 +29,14 @@ export const validateThemeCreate = z.object({
             error: "Name cannot be an email",
         }),
 
-    description: z.string().optional(),
+    description: z
+        .string()
+        .trim()
+        .transform(sanitizeDisplayText)
+        .refine((val) => val.length <= 500, {
+            message: "Description must be at most 500 characters",
+        })
+        .optional(),
 
     adaptive: z.boolean(),
     type: z.enum(["dark", "light"], "Invalid Theme type provided"),

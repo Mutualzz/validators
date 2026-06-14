@@ -1,4 +1,5 @@
 import z from "zod";
+import { sanitizeDisplayText } from "./utils";
 
 export const validateMembersGetAllParams = z.object({
     spaceId: z.string({ error: "Invalid space ID" }).trim(),
@@ -33,7 +34,13 @@ export const validateMembersRemoveMeParams = validateMembersAddParams;
 export const validateMemberKickBody = z.object({});
 
 export const validateMemberBanBody = z.object({
-    reason: z.string({ error: "Invalid reason provided" }).trim(),
+    reason: z
+        .string({ error: "Invalid reason provided" })
+        .trim()
+        .transform(sanitizeDisplayText)
+        .refine((val) => val.length <= 512, {
+            message: "Ban reason must be at most 512 characters",
+        }),
     // Timeframe in seconds for which the messages sent by the user will be deleted. -1 to delete all messages, 0 to not
     // delete any messages, or a positive integer up to 7 days (604800 seconds).
     deleteMessageTimeframe: z.number().min(-1).max(604800),

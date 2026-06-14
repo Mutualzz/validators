@@ -10,13 +10,31 @@ export const validateMessageParamsModify = z.object({
   messageId: z.string({ error: "Invalid Message ID" }),
 });
 
-export const validateMessageBodyPut = z.object({
+export const validateMessageBodyPut = z
+  .object({
+    content: z
+      .string()
+      .max(2000, "Message cannot exceed 2000 characters")
+      .trim()
+      .optional(),
+    nonce: z.string().optional(),
+    expressionIds: z
+      .array(z.string({ error: "Invalid expression ID" }))
+      .max(3, "You can only attach up to 3 stickers")
+      .optional(),
+  })
+  .refine(
+    (data) =>
+      (data.content?.length ?? 0) > 0 || (data.expressionIds?.length ?? 0) > 0,
+    { message: "Message must have content or stickers" },
+  );
+
+export const validateMessageBodyPatch = z.object({
   content: z
     .string()
     .max(2000, "Message cannot exceed 2000 characters")
     .trim()
     .optional(),
-  nonce: z.string().optional(),
 });
 
 export const validateMessageAckParams = z.object({

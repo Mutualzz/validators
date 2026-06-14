@@ -5,7 +5,7 @@ import {
     notAllowedNames,
 } from "./constants";
 import { emailRegex, pswdRegex } from "./regexes";
-import { sanitizeName } from "./utils";
+import { sanitizeName, sanitizeDisplayText } from "./utils";
 
 export const validateUsernameChange = z.object({
     username: z
@@ -57,7 +57,10 @@ export const validateMeUpdate = z.object({
         .trim()
         .min(1, "Nickname must be at least 1 character")
         .max(32, "Nickname must be at most 32 characters")
-        .transform((val) => val.trim().replace(/\s{2,}/g, " "))
+        .transform(sanitizeDisplayText)
+        .refine((val) => !invisibleCharsRegex.test(val), {
+            error: "Nickname contains invisible or invalid characters",
+        })
         .optional(),
 });
 
@@ -68,8 +71,9 @@ export const validateMeSettingsUpdate = z.object({
     spacePositions: z.array(z.string().trim()).optional(),
     preferredSelfMute: z.boolean().optional(),
     preferredSelfDeaf: z.boolean().optional(),
-    favoriteEmotes: z.array(z.string()).optional(),
+    favoriteEmojis: z.array(z.string()).optional(),
     favoriteGifs: z.array(z.string()).optional(),
+    favoriteStickers: z.array(z.string()).optional(),
 });
 
 export const validatePreviousAvatarDelete = z.object({

@@ -5,7 +5,7 @@ import {
     notAllowedNames,
 } from "./constants";
 import { emailRegex, pswdRegex } from "./regexes";
-import { sanitizeName } from "./utils";
+import { sanitizeName, sanitizeDisplayText } from "./utils";
 
 export const validateRegister = z
     .object({
@@ -59,7 +59,10 @@ export const validateRegister = z
             .max(32, {
                 error: "Display name must be at most 32 characters",
             })
-            .transform((val) => val.trim().replace(/\s{2,}/g, " "))
+            .transform(sanitizeDisplayText)
+            .refine((val) => !invisibleCharsRegex.test(val), {
+                error: "Display name contains invisible or invalid characters",
+            })
             .optional(),
 
         dateOfBirth: z.union([z.string(), z.date()]).transform((val) => {

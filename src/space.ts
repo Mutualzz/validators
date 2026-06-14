@@ -1,19 +1,21 @@
 import z from "zod";
 import { emailRegex } from "./regexes";
+import { sanitizeDisplayText } from "./utils";
 
 export const validateSpaceCreate = z.object({
     name: z
         .string()
-        .min(2, {
-            error: "Space name must be at least 2 characters long",
+        .trim()
+        .transform(sanitizeDisplayText)
+        .refine((val) => val.length >= 2, {
+            message: "Space name must be at least 2 characters long",
         })
-        .max(100, {
-            error: "Space name must be at least 100 characters long",
+        .refine((val) => val.length <= 100, {
+            message: "Space name must be at most 100 characters long",
         })
         .refine((val) => !emailRegex.test(val), {
             error: "Name cannot be an email",
-        })
-        .trim(),
+        }),
 
     crop: z
         .object({

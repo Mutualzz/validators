@@ -2,11 +2,21 @@ import emojiRegex from "emojibase-regex";
 import { colorLikeRegex, colorValueRegex } from "./regexes";
 import z from "zod";
 
+const ZERO_WIDTH_CHARS = /[\u200B-\u200D\uFEFF]/g;
+const UNSAFE_DISPLAY_CHARS = /[\u0000-\u001F\u007F<>\\]/g;
+
+export const sanitizeDisplayText = (input: string) =>
+    input
+        .replace(ZERO_WIDTH_CHARS, "")
+        .replace(UNSAFE_DISPLAY_CHARS, "")
+        .trim()
+        .replace(/\s{2,}/g, " ");
+
 // Sanitize username by trimming whitespace and replacing multiple spaces with a single space
 export const sanitizeName = (input: string, toLowerCase = true) => {
     let returnValue = input
         .replace(emojiRegex, "") // remove emojis
-        .replace(/[\u200B-\u200D\uFEFF]/g, "") // remove zero-width
+        .replace(ZERO_WIDTH_CHARS, "") // remove zero-width
         .trim()
         .replace(/\s{2,}/g, " "); // collapse spaces
 
