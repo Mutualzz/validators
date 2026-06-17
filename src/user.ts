@@ -1,5 +1,9 @@
 import z from "zod";
 
 export const validateUserGet = z.object({
-    userId: z.string({ error: "Invalid user ID" }),
+    identifier: z
+        .string({ error: "Invalid user" })
+        .min(1)
+        .max(64)
+        .transform((value) => value.trim().toLowerCase()),
 });

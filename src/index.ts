@@ -14,3 +14,4 @@ export * from "./space";
 export * from "./user";
 export * from "./role";
 export * from "./expressions";
+export * from "./profile";

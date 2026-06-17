@@ -46,8 +46,14 @@ export const validateMemberBanBody = z.object({
     deleteMessageTimeframe: z.number().min(-1).max(604800),
 });
 
-export const validateMemberVoiceModerationBody = z.object({
-    spaceDeaf: z.boolean().optional(),
-    spaceMute: z.boolean().optional(),
-    disconnect: z.boolean().optional(),
-});
+export const validateMemberVoiceModerationBody = z
+    .object({
+        spaceDeaf: z.boolean().optional(),
+        spaceMute: z.boolean().optional(),
+        disconnect: z.boolean().optional(),
+        channelId: z.string({ error: "Invalid channel ID" }).trim().optional(),
+    })
+    .refine(
+        (body) => !(body.disconnect && body.channelId),
+        "Cannot disconnect and move a member at the same time",
+    );
