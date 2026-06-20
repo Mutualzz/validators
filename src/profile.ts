@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { validateFontFamily } from "./fonts";
 import { sanitizeMarkdownText } from "./utils";
 
 const roundPercent = (value: number) =>
@@ -175,6 +176,7 @@ export const validateProfileUpdate = z.object({
     (val) => (Array.isArray(val) ? val[0] : val),
     z.enum(["itunes", "deezer"]).nullable().optional(),
   ),
+  pageFontFamily: validateFontFamily,
   blocks: z.array(validateProfileBlock).max(100).optional().default([]),
 });
 
@@ -195,9 +197,18 @@ export const validateProfileGet = z.object({
     .transform((value) => value.trim().toLowerCase()),
 });
 
+export const profileAssetUploadTypes = [
+  "banner",
+  "background",
+  "music",
+  "font",
+] as const;
+
+export type ProfileAssetUploadType = (typeof profileAssetUploadTypes)[number];
+
 export const validateProfileAssetUpload = z.object({
   type: z.preprocess(
     (val) => (Array.isArray(val) ? val[0] : val),
-    z.enum(["banner", "background", "music"]),
+    z.enum(profileAssetUploadTypes),
   ).default("background"),
 });

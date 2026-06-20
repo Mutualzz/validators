@@ -1,6 +1,7 @@
 export * from "./auth";
 export * from "./constants";
 export * from "./regexes";
+export * from "./fonts";
 export * from "./theme";
 export * from "./utils";
 
@@ -10,6 +11,7 @@ export * from "./invites";
 export * from "./me";
 export * from "./members";
 export * from "./messages";
+export * from "./reactions";
 export * from "./space";
 export * from "./user";
 export * from "./role";

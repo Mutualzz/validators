@@ -4,6 +4,7 @@ import {
     invisibleCharsRegex,
     notAllowedNames,
 } from "./constants";
+import { validateFontFamily } from "./fonts";
 import { emailRegex } from "./regexes";
 import { sanitizeName, validateColor, validateNonGradientColor, sanitizeDisplayText } from "./utils";
 
@@ -60,6 +61,7 @@ export const validateThemeCreate = z.object({
     }),
 
     typography: z.object({
+        fontFamily: validateFontFamily,
         colors: z.object({
             primary: validateNonGradientColor,
             secondary: validateNonGradientColor,
