@@ -200,6 +200,7 @@ export const validateProfileGet = z.object({
 export const profileAssetUploadTypes = [
   "banner",
   "background",
+  "image",
   "music",
   "font",
 ] as const;
