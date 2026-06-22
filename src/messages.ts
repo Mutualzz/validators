@@ -18,6 +18,8 @@ export const validateMessageBodyPut = z
       .trim()
       .optional(),
     nonce: z.string().optional(),
+    repliedToId: z.string({ error: "Invalid replied to message ID" }).optional(),
+    mentionReply: z.boolean().optional(),
     expressionIds: z
       .array(z.string({ error: "Invalid expression ID" }))
       .max(3, "You can only attach up to 3 stickers")
