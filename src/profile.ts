@@ -181,22 +181,22 @@ export const validateProfileUpdate = z.object({
     .nullable()
     .optional()
     .transform((val) => (val === "" ? null : val)),
-  introMusicUrl: z.preprocess(
+  profileMusicUrl: z.preprocess(
     (val) => (val === "" ? null : val),
     z
       .union([z.string().url(), z.string().regex(/^[a-f0-9_]+$/i), z.null()])
       .optional(),
   ),
-  introMusicTrackId: z.preprocess(
+  profileMusicTrackId: z.preprocess(
     (val) => (val === "" ? null : val),
     z.union([z.string().regex(/^\d+$/), z.null()]).optional(),
   ),
-  introMusicTrackSource: z.preprocess(
+  profileMusicTrackSource: z.preprocess(
     (val) => (Array.isArray(val) ? val[0] : val),
     z.enum(["itunes", "deezer"]).nullable().optional(),
   ),
-  introMusicTitle: z.string().max(200).nullable().optional(),
-  introMusicAuthorName: z.string().max(200).nullable().optional(),
+  profileMusicTitle: z.string().max(200).nullable().optional(),
+  profileMusicAuthorName: z.string().max(200).nullable().optional(),
   pageFontFamily: validateFontFamily,
   blocks: z.array(validateProfileBlock).max(100).optional().default([]),
 });
