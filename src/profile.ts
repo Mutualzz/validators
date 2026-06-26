@@ -24,6 +24,7 @@ const profileBlockBase = z.object({
     "mutual",
     "divider",
     "quote",
+    "draw",
   ]),
   x: percent,
   y: percent,
@@ -59,6 +60,13 @@ const profileMusicBlock = profileBlockBase.extend({
   image: z.string().max(2048).nullable().optional(),
   previewUrl: z.string().max(2048).nullable().optional(),
   trackUrl: z.string().max(2048).nullable().optional(),
+  youtubeUrl: z.url().max(2048).nullable().optional(),
+  audioHash: z
+    .string()
+    .regex(/^[a-f0-9_]+$/i)
+    .max(128)
+    .nullable()
+    .optional(),
   track: z
     .object({
       source: z.enum(["itunes", "deezer"]),
@@ -114,6 +122,17 @@ const profileQuoteBlock = profileBlockBase.extend({
   attribution: z.string().max(120).nullable().optional(),
 });
 
+const profileDrawBlock = profileBlockBase.extend({
+  type: z.literal("draw"),
+  svgData: z.string().max(200000).nullable().optional(),
+  paths: z.string().max(200000).nullable().optional(),
+  backgroundColor: z
+    .string()
+    .regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/)
+    .nullable()
+    .optional(),
+});
+
 export const validateProfileBlock = z.discriminatedUnion("type", [
   profileHeaderBlock,
   profileTextBlock,
@@ -125,11 +144,15 @@ export const validateProfileBlock = z.discriminatedUnion("type", [
   profileMutualBlock,
   profileDividerBlock,
   profileQuoteBlock,
+  profileDrawBlock,
 ]);
 
 const hexColor = z
   .string()
-  .regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/, "Invalid hex color")
+  .regex(
+    /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/,
+    "Invalid hex color",
+  )
   .nullable()
   .optional();
 
@@ -161,11 +184,7 @@ export const validateProfileUpdate = z.object({
   introMusicUrl: z.preprocess(
     (val) => (val === "" ? null : val),
     z
-      .union([
-        z.string().url(),
-        z.string().regex(/^[a-f0-9_]+$/i),
-        z.null(),
-      ])
+      .union([z.string().url(), z.string().regex(/^[a-f0-9_]+$/i), z.null()])
       .optional(),
   ),
   introMusicTrackId: z.preprocess(
@@ -176,6 +195,8 @@ export const validateProfileUpdate = z.object({
     (val) => (Array.isArray(val) ? val[0] : val),
     z.enum(["itunes", "deezer"]).nullable().optional(),
   ),
+  introMusicTitle: z.string().max(200).nullable().optional(),
+  introMusicAuthorName: z.string().max(200).nullable().optional(),
   pageFontFamily: validateFontFamily,
   blocks: z.array(validateProfileBlock).max(100).optional().default([]),
 });
@@ -208,8 +229,10 @@ export const profileAssetUploadTypes = [
 export type ProfileAssetUploadType = (typeof profileAssetUploadTypes)[number];
 
 export const validateProfileAssetUpload = z.object({
-  type: z.preprocess(
-    (val) => (Array.isArray(val) ? val[0] : val),
-    z.enum(profileAssetUploadTypes),
-  ).default("background"),
+  type: z
+    .preprocess(
+      (val) => (Array.isArray(val) ? val[0] : val),
+      z.enum(profileAssetUploadTypes),
+    )
+    .default("background"),
 });
