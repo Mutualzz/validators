@@ -17,3 +17,4 @@ export * from "./user";
 export * from "./role";
 export * from "./expressions";
 export * from "./profile";
+export * from "./posts";
