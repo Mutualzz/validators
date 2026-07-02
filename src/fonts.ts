@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const CUSTOM_FONT_HASH_RE = /^font:[a-f0-9]{64}$/i;
+const CUSTOM_FONT_HASH_RE = /^font:[a-f0-9]{64}(?:\.(?:woff2|woff|ttf|otf))?$/i;
 const WEB_FONT_FAMILY_RE = /^[\p{L}\p{N}][\p{L}\p{N} '&.,-]{0,78}$/u;
 
 export function isCustomFontRef(value: string) {

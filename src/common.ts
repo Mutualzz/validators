@@ -49,7 +49,6 @@ const fontMimeType = z.preprocess(
         "application/x-font-woff",
         "application/x-font-ttf",
         "application/x-font-otf",
-        "application/vnd.ms-fontobject",
         "application/octet-stream",
     ]),
 );
