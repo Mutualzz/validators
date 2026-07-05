@@ -147,6 +147,134 @@ export const validateProfileBlock = z.discriminatedUnion("type", [
   profileDrawBlock,
 ]);
 
+const mobileProfileBlockBase = z.object({
+  id: z.string().min(1),
+  type: z.enum([
+    "header",
+    "text",
+    "image",
+    "music",
+    "links",
+    "activity",
+    "roles",
+    "mutual",
+    "divider",
+    "quote",
+    "draw",
+  ]),
+  size: z.enum(["s", "m", "l"]),
+  order: z.number().int().min(0),
+});
+
+const mobileProfileHeaderBlock = mobileProfileBlockBase.extend({
+  type: z.literal("header"),
+  bannerHeight: z.number().min(30).max(80).optional(),
+  bannerFocusY: percent.optional(),
+});
+
+const mobileProfileTextBlock = mobileProfileBlockBase.extend({
+  type: z.literal("text"),
+  content: z
+    .string()
+    .max(2000, "Text block content must be at most 2000 characters")
+    .transform(sanitizeMarkdownText),
+});
+
+const mobileProfileImageBlock = mobileProfileBlockBase.extend({
+  type: z.literal("image"),
+  src: z.string().min(1).max(2048),
+  objectFit: z.enum(["cover", "contain"]).optional(),
+});
+
+const mobileProfileMusicBlock = mobileProfileBlockBase.extend({
+  type: z.literal("music"),
+  title: z.string().max(200).nullable().optional(),
+  artists: z.string().max(200).nullable().optional(),
+  image: z.string().max(2048).nullable().optional(),
+  previewUrl: z.string().max(2048).nullable().optional(),
+  trackUrl: z.string().max(2048).nullable().optional(),
+  youtubeUrl: z.url().max(2048).nullable().optional(),
+  audioHash: z
+    .string()
+    .regex(/^[a-f0-9_]+$/i)
+    .max(128)
+    .nullable()
+    .optional(),
+  track: z
+    .object({
+      source: z.enum(["itunes", "deezer"]),
+      id: z.string().min(1).max(128),
+      name: z.string().min(1).max(300),
+      artists: z.string().max(300),
+      image: z.string().max(2048).nullable().optional(),
+      previewUrl: z.string().max(2048).nullable().optional(),
+      trackUrl: z.string().max(2048),
+    })
+    .nullable()
+    .optional(),
+});
+
+const mobileProfileLinksBlock = mobileProfileBlockBase.extend({
+  type: z.literal("links"),
+  links: z.array(profileLinkItem).max(8),
+});
+
+const mobileProfileActivityBlock = mobileProfileBlockBase.extend({
+  type: z.literal("activity"),
+  showCustomStatus: z.boolean().optional(),
+});
+
+const mobileProfileRolesBlock = mobileProfileBlockBase.extend({
+  type: z.literal("roles"),
+  maxRoles: z.number().int().min(1).max(12).optional(),
+});
+
+const mobileProfileMutualBlock = mobileProfileBlockBase.extend({
+  type: z.literal("mutual"),
+  mode: z.enum(["spaces", "friends"]),
+  maxItems: z.number().int().min(1).max(12).optional(),
+});
+
+const mobileProfileDividerBlock = mobileProfileBlockBase.extend({
+  type: z.literal("divider"),
+  style: z.enum(["line", "dotted", "space"]).optional(),
+});
+
+const mobileProfileQuoteBlock = mobileProfileBlockBase.extend({
+  type: z.literal("quote"),
+  content: z
+    .string()
+    .max(1000, "Quote content must be at most 1000 characters")
+    .transform(sanitizeMarkdownText),
+  variant: z.enum(["default", "accent", "warning"]).optional(),
+  attribution: z.string().max(120).nullable().optional(),
+});
+
+const mobileProfileDrawBlock = mobileProfileBlockBase.extend({
+  type: z.literal("draw"),
+  svgData: z.string().max(200000).nullable().optional(),
+  paths: z.string().max(200000).nullable().optional(),
+  backgroundColor: z
+    .string()
+    .regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/)
+    .nullable()
+    .optional(),
+});
+
+export const validateMobileProfileBlock = z.discriminatedUnion("type", [
+  mobileProfileHeaderBlock,
+  mobileProfileTextBlock,
+  mobileProfileImageBlock,
+  mobileProfileMusicBlock,
+  mobileProfileLinksBlock,
+  mobileProfileActivityBlock,
+  mobileProfileRolesBlock,
+  mobileProfileMutualBlock,
+  mobileProfileDividerBlock,
+  mobileProfileQuoteBlock,
+  mobileProfileDrawBlock,
+]);
+
 const hexColor = z
   .string()
   .regex(
@@ -199,6 +327,11 @@ export const validateProfileUpdate = z.object({
   profileMusicAuthorName: z.string().max(200).nullable().optional(),
   pageFontFamily: validateFontFamily,
   blocks: z.array(validateProfileBlock).max(100).optional().default([]),
+  mobileBlocks: z
+    .array(validateMobileProfileBlock)
+    .max(100)
+    .optional()
+    .default([]),
 });
 
 export const validateProfileMusicSearch = z.object({
