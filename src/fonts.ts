@@ -9,7 +9,11 @@ export function isCustomFontRef(value: string) {
 
 export function isValidWebFontFamilyName(value: string) {
   const trimmed = value.trim();
-  return trimmed.length >= 1 && trimmed.length <= 80 && WEB_FONT_FAMILY_RE.test(trimmed);
+  return (
+    trimmed.length >= 1 &&
+    trimmed.length <= 80 &&
+    WEB_FONT_FAMILY_RE.test(trimmed)
+  );
 }
 
 export function isValidFontFamily(value: string | null | undefined) {
@@ -20,7 +24,6 @@ export function isValidFontFamily(value: string | null | undefined) {
   return isValidWebFontFamilyName(trimmed);
 }
 
-/** @deprecated Use isValidFontFamily */
 export function isAllowedGoogleFontFamily(value: string | null | undefined) {
   return isValidFontFamily(value);
 }
@@ -35,5 +38,4 @@ export const validateFontFamily = z
     message: "Invalid font family",
   });
 
-/** @deprecated Use validateFontFamily */
 export const validateGoogleFontFamily = validateFontFamily;

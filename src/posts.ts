@@ -11,6 +11,10 @@ export const validatePostBodyPut = z.object({
     .trim()
     .optional(),
   scheduledFor: z.string({ error: "Invalid scheduled date" }).optional(),
+  expressionIds: z
+    .array(z.string({ error: "Invalid expression ID" }))
+    .max(3, "You can only attach up to 3 stickers")
+    .optional(),
 });
 
 export const validatePostBodyPatch = z.object({
@@ -33,13 +37,14 @@ export const validatePostCommentParams = z.object({
 export const validatePostCommentBodyPut = z.object({
   content: z
     .string()
-    .min(1, "Comment cannot be empty")
     .max(1000, "Comment cannot exceed 1000 characters")
-    .trim(),
+    .trim()
+    .optional(),
   expressionIds: z
     .array(z.string({ error: "Invalid expression ID" }))
     .max(3, "You can only attach up to 3 stickers")
     .optional(),
+  repliedToId: z.string({ error: "Invalid comment ID" }).optional(),
 });
 
 export const validatePostCommentBodyPatch = z.object({
