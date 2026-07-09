@@ -180,10 +180,22 @@ const mobileProfileTextBlock = mobileProfileBlockBase.extend({
     .transform(sanitizeMarkdownText),
 });
 
+const profileImageCrop = z
+  .object({
+    x: z.number().min(0).max(1),
+    y: z.number().min(0).max(1),
+    width: z.number().min(0).max(1),
+    height: z.number().min(0).max(1),
+  })
+  .refine((crop) => crop.width > 0 && crop.height > 0, {
+    message: "Image crop dimensions must be greater than zero",
+  });
+
 const mobileProfileImageBlock = mobileProfileBlockBase.extend({
   type: z.literal("image"),
   src: z.string().min(1).max(2048),
   objectFit: z.enum(["cover", "contain"]).optional(),
+  crop: profileImageCrop.nullable().optional(),
 });
 
 const mobileProfileMusicBlock = mobileProfileBlockBase.extend({
