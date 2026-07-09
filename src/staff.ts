@@ -20,13 +20,87 @@ const staffReason = z
     })
     .optional();
 
-export const validateStaffDisableUserBody = z.object({
-    disabled: z.boolean({ error: "Invalid disabled value" }),
-    reason: staffReason,
-});
+export const validateStaffDisableUserBody = z
+    .object({
+        disabled: z.boolean({ error: "Invalid disabled value" }),
+        reason: staffReason,
+    })
+    .refine((val) => !val.disabled || !!val.reason, {
+        message: "A reason is required to disable an account",
+        path: ["reason"],
+    });
 
 export const validateStaffForceLogoutBody = z.object({
     reason: staffReason,
+});
+
+export const validateStaffDeleteUserBody = z.object({
+    mode: z.enum(["soft", "hard"]).default("soft"),
+    reason: z
+        .string({ error: "A deletion reason is required" })
+        .trim()
+        .transform(sanitizeDisplayText)
+        .refine((val) => val.length >= 1, {
+            message: "A deletion reason is required",
+        })
+        .refine((val) => val.length <= 512, {
+            message: "Reason must be at most 512 characters",
+        }),
+    confirmUsername: z
+        .string({ error: "Username confirmation is required" })
+        .trim()
+        .toLowerCase()
+        .refine((val) => val.length >= 1, {
+            message: "Type the username to confirm deletion",
+        }),
+});
+
+export const validateStaffWarnUserBody = z.object({
+    reason: z
+        .string({ error: "A warning reason is required" })
+        .trim()
+        .transform(sanitizeDisplayText)
+        .refine((val) => val.length >= 1, {
+            message: "A warning reason is required",
+        })
+        .refine((val) => val.length <= 512, {
+            message: "Reason must be at most 512 characters",
+        }),
+});
+
+export const validateStaffRestrictUserBody = z.object({
+    hours: z.coerce
+        .number({ error: "Invalid duration" })
+        .min(1, "Duration must be at least 1 hour")
+        .max(720, "Duration cannot exceed 30 days"),
+    reason: z
+        .string({ error: "A reason is required" })
+        .trim()
+        .transform(sanitizeDisplayText)
+        .refine((val) => val.length >= 1, {
+            message: "A reason is required",
+        })
+        .refine((val) => val.length <= 512, {
+            message: "Reason must be at most 512 characters",
+        }),
+});
+
+export const validateStaffNotesQuery = z.object({
+    before: z.string().trim().optional(),
+    limit: z.coerce.number().min(1).max(100).default(50),
+});
+
+export const validateStaffCreateNoteBody = z.object({
+    content: z
+        .string({ error: "Note content is required" })
+        .trim()
+        .transform(sanitizeDisplayText)
+        .refine((val) => val.length >= 1, {
+            message: "Note content is required",
+        })
+        .refine((val) => val.length <= 2000, {
+            message: "Note must be at most 2000 characters",
+        }),
 });
 
 export const validateStaffSearchUsersQuery = z

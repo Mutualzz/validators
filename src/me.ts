@@ -75,6 +75,9 @@ export const validateMeSettingsUpdate = z.object({
   favoriteEmojis: z.array(z.string()).optional(),
   favoriteGifs: z.array(z.string()).optional(),
   favoriteStickers: z.array(z.string()).optional(),
+  pushEnabled: z.boolean().optional(),
+  pushDirectMessages: z.boolean().optional(),
+  pushMentions: z.boolean().optional(),
 });
 
 export const validatePreviousAvatarDelete = z.object({
@@ -124,4 +127,13 @@ export const validateRelationshipRequest = z.object({
     .min(1)
     .max(64)
     .transform((value) => value.trim().toLowerCase()),
+});
+
+export const validatePushTokenRegister = z.object({
+  token: z.string().trim().min(1),
+  platform: z.enum(["ios", "android"]),
+});
+
+export const validatePushTokenDelete = z.object({
+  token: z.string().trim().min(1).optional(),
 });
