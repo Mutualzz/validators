@@ -25,12 +25,19 @@ const profileBlockBase = z.object({
     "divider",
     "quote",
     "draw",
+    "sticker",
   ]),
   x: percent,
   y: percent,
   width: percent.refine((v) => v >= 1, "Width must be at least 1%"),
   height: percent.refine((v) => v >= 1, "Height must be at least 1%"),
   zIndex: z.number().int().min(0),
+  cornerRadius: z
+    .number()
+    .int()
+    .min(0, "Corner radius must be at least 0px")
+    .max(48, "Corner radius must be at most 48px")
+    .optional(),
 });
 
 const profileHeaderBlock = profileBlockBase.extend({
@@ -133,6 +140,11 @@ const profileDrawBlock = profileBlockBase.extend({
     .optional(),
 });
 
+const profileStickerBlock = profileBlockBase.extend({
+  type: z.literal("sticker"),
+  expressionId: z.string().trim().min(1).max(128),
+});
+
 export const validateProfileBlock = z.discriminatedUnion("type", [
   profileHeaderBlock,
   profileTextBlock,
@@ -145,6 +157,7 @@ export const validateProfileBlock = z.discriminatedUnion("type", [
   profileDividerBlock,
   profileQuoteBlock,
   profileDrawBlock,
+  profileStickerBlock,
 ]);
 
 const mobileProfileBlockBase = z.object({
@@ -161,9 +174,16 @@ const mobileProfileBlockBase = z.object({
     "divider",
     "quote",
     "draw",
+    "sticker",
   ]),
   size: z.enum(["s", "m", "l"]),
   order: z.number().int().min(0),
+  cornerRadius: z
+    .number()
+    .int()
+    .min(0, "Corner radius must be at least 0px")
+    .max(48, "Corner radius must be at most 48px")
+    .optional(),
 });
 
 const mobileProfileHeaderBlock = mobileProfileBlockBase.extend({
@@ -273,6 +293,11 @@ const mobileProfileDrawBlock = mobileProfileBlockBase.extend({
     .optional(),
 });
 
+const mobileProfileStickerBlock = mobileProfileBlockBase.extend({
+  type: z.literal("sticker"),
+  expressionId: z.string().trim().min(1).max(128),
+});
+
 export const validateMobileProfileBlock = z.discriminatedUnion("type", [
   mobileProfileHeaderBlock,
   mobileProfileTextBlock,
@@ -285,6 +310,7 @@ export const validateMobileProfileBlock = z.discriminatedUnion("type", [
   mobileProfileDividerBlock,
   mobileProfileQuoteBlock,
   mobileProfileDrawBlock,
+  mobileProfileStickerBlock,
 ]);
 
 const hexColor = z
@@ -310,8 +336,23 @@ const assetRef = z
     "Must be a CDN hash or HTTPS URL",
   );
 
+const profileBackgroundColor = z
+  .string()
+  .max(512)
+  .nullable()
+  .optional()
+  .refine(
+    (val) =>
+      val == null ||
+      val === "" ||
+      /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(val) ||
+      /^linear-gradient\(.+\)$/i.test(val),
+    "Must be a hex color or linear gradient",
+  )
+  .transform((val) => (val === "" ? null : val));
+
 export const validateProfileUpdate = z.object({
-  backgroundColor: hexColor,
+  backgroundColor: profileBackgroundColor,
   backgroundImage: assetRef,
   banner: assetRef,
   bio: z
