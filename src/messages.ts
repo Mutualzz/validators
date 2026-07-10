@@ -24,6 +24,15 @@ export const validateMessageBodyPut = z.object({
     .max(3, "You can only attach up to 3 stickers")
     .optional(),
   sharedPostId: z.string({ error: "Invalid Post ID" }).optional(),
+  codedLinks: z
+    .array(
+      z.object({
+        type: z.union([z.literal(0), z.literal(1)]),
+        code: z.string().min(1).max(32),
+      }),
+    )
+    .max(5)
+    .optional(),
 });
 
 export const validateMessageBodyPatch = z.object({

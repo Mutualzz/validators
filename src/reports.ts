@@ -6,6 +6,7 @@ export const reportTargetTypes = [
     "post",
     "comment",
     "user",
+    "space",
 ] as const;
 
 export const reportReasons = [

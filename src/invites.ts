@@ -27,3 +27,7 @@ export const validateInviteBodyPatch = z.object({
         ])
         .optional(),
 });
+
+export const validateInviteCodeParam = z.object({
+    code: z.string().min(1),
+});

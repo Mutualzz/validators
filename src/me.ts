@@ -137,3 +137,17 @@ export const validatePushTokenRegister = z.object({
 export const validatePushTokenDelete = z.object({
   token: z.string().trim().min(1).optional(),
 });
+
+export const validateDeleteAccountBody = z.object({
+  confirmUsername: z
+    .string({ error: "Username confirmation is required" })
+    .trim()
+    .toLowerCase()
+    .refine((val) => val.length >= 1, {
+      message: "Username confirmation is required",
+    }),
+  password: z
+    .string({ error: "Password is required" })
+    .trim()
+    .min(1, "Password is required"),
+});
