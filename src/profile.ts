@@ -21,6 +21,7 @@ const profileBlockBase = z.object({
     "links",
     "activity",
     "roles",
+    "connections",
     "mutual",
     "divider",
     "quote",
@@ -108,6 +109,10 @@ const profileRolesBlock = profileBlockBase.extend({
   maxRoles: z.number().int().min(1).max(12).optional(),
 });
 
+const profileConnectionsBlock = profileBlockBase.extend({
+  type: z.literal("connections"),
+});
+
 const profileMutualBlock = profileBlockBase.extend({
   type: z.literal("mutual"),
   mode: z.enum(["spaces", "friends"]),
@@ -153,6 +158,7 @@ export const validateProfileBlock = z.discriminatedUnion("type", [
   profileLinksBlock,
   profileActivityBlock,
   profileRolesBlock,
+  profileConnectionsBlock,
   profileMutualBlock,
   profileDividerBlock,
   profileQuoteBlock,
@@ -170,6 +176,7 @@ const mobileProfileBlockBase = z.object({
     "links",
     "activity",
     "roles",
+    "connections",
     "mutual",
     "divider",
     "quote",
@@ -261,6 +268,10 @@ const mobileProfileRolesBlock = mobileProfileBlockBase.extend({
   maxRoles: z.number().int().min(1).max(12).optional(),
 });
 
+const mobileProfileConnectionsBlock = mobileProfileBlockBase.extend({
+  type: z.literal("connections"),
+});
+
 const mobileProfileMutualBlock = mobileProfileBlockBase.extend({
   type: z.literal("mutual"),
   mode: z.enum(["spaces", "friends"]),
@@ -306,6 +317,7 @@ export const validateMobileProfileBlock = z.discriminatedUnion("type", [
   mobileProfileLinksBlock,
   mobileProfileActivityBlock,
   mobileProfileRolesBlock,
+  mobileProfileConnectionsBlock,
   mobileProfileMutualBlock,
   mobileProfileDividerBlock,
   mobileProfileQuoteBlock,

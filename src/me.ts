@@ -78,6 +78,8 @@ export const validateMeSettingsUpdate = z.object({
   pushEnabled: z.boolean().optional(),
   pushDirectMessages: z.boolean().optional(),
   pushMentions: z.boolean().optional(),
+  shareActivity: z.boolean().optional(),
+  shareRecentActivity: z.boolean().optional(),
 });
 
 export const validatePreviousAvatarDelete = z.object({
