@@ -11,6 +11,21 @@ const percent = z
   .max(100, "Position must be at most 100%")
   .transform(roundPercent);
 
+const profileBackgroundColor = z
+  .string()
+  .max(512)
+  .nullable()
+  .optional()
+  .refine(
+    (val) =>
+      val == null ||
+      val === "" ||
+      /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(val) ||
+      /^linear-gradient\(.+\)$/i.test(val),
+    "Must be a hex color or linear gradient",
+  )
+  .transform((val) => (val === "" ? null : val));
+
 const profileBlockBase = z.object({
   id: z.string().min(1),
   type: z.enum([
@@ -39,6 +54,7 @@ const profileBlockBase = z.object({
     .min(0, "Corner radius must be at least 0px")
     .max(48, "Corner radius must be at most 48px")
     .optional(),
+  backgroundColor: profileBackgroundColor,
 });
 
 const profileHeaderBlock = profileBlockBase.extend({
@@ -191,6 +207,7 @@ const mobileProfileBlockBase = z.object({
     .min(0, "Corner radius must be at least 0px")
     .max(48, "Corner radius must be at most 48px")
     .optional(),
+  backgroundColor: profileBackgroundColor,
 });
 
 const mobileProfileHeaderBlock = mobileProfileBlockBase.extend({
@@ -348,21 +365,6 @@ const assetRef = z
     "Must be a CDN hash or HTTPS URL",
   );
 
-const profileBackgroundColor = z
-  .string()
-  .max(512)
-  .nullable()
-  .optional()
-  .refine(
-    (val) =>
-      val == null ||
-      val === "" ||
-      /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(val) ||
-      /^linear-gradient\(.+\)$/i.test(val),
-    "Must be a hex color or linear gradient",
-  )
-  .transform((val) => (val === "" ? null : val));
-
 export const validateProfileUpdate = z.object({
   backgroundColor: profileBackgroundColor,
   backgroundImage: assetRef,
@@ -405,6 +407,17 @@ export const validateProfileMusicSearch = z.object({
   source: z.preprocess(
     (val) => (Array.isArray(val) ? val[0] : val),
     z.enum(["itunes", "deezer", "all"]).optional().default("all"),
+  ),
+});
+
+export const validateProfileMusicPreview = z.object({
+  source: z.preprocess(
+    (val) => (Array.isArray(val) ? val[0] : val),
+    z.enum(["itunes", "deezer"]),
+  ),
+  id: z.preprocess(
+    (val) => (Array.isArray(val) ? val[0] : val),
+    z.string().trim().min(1).max(128),
   ),
 });
 

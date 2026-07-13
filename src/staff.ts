@@ -179,3 +179,51 @@ export const validateStaffProfileUpdateBody = z
     .refine((val) => val.username !== undefined || val.globalName !== undefined, {
         message: "Provide a username or display name to update",
     });
+
+const semverString = z
+    .string()
+    .trim()
+    .regex(/^\d+\.\d+\.\d+$/, "Version must be semver (e.g. 1.2.3)");
+
+export const validateStaffCreateChangelogBody = z
+    .object({
+        title: z
+            .string({ error: "Title is required" })
+            .trim()
+            .transform(sanitizeDisplayText)
+            .refine((val) => val.length >= 1, {
+                message: "Title is required",
+            })
+            .refine((val) => val.length <= 128, {
+                message: "Title must be at most 128 characters",
+            }),
+        body: z
+            .string({ error: "Body is required" })
+            .trim()
+            .refine((val) => val.length >= 1, {
+                message: "Body is required",
+            })
+            .refine((val) => val.length <= 10000, {
+                message: "Body must be at most 10000 characters",
+            }),
+        imageUrl: z
+            .string()
+            .trim()
+            .url("Invalid image URL")
+            .nullable()
+            .optional(),
+        desktopVersion: semverString.nullable().optional(),
+        mobileVersion: semverString.nullable().optional(),
+    })
+    .refine((val) => !!val.desktopVersion || !!val.mobileVersion, {
+        message: "Provide a desktopVersion and/or mobileVersion",
+    });
+
+export const validateStaffChangelogParams = z.object({
+    changelogId: z.string({ error: "Invalid changelog ID" }).trim(),
+});
+
+export const validateStaffChangelogsQuery = z.object({
+    before: z.string().trim().optional(),
+    limit: z.coerce.number().min(1).max(100).default(25),
+});
