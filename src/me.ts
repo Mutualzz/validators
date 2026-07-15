@@ -70,6 +70,7 @@ export const validateMeSettingsUpdate = z.object({
   currentIcon: z.string().trim().nullable().optional(),
   preferredMode: z.enum(["feed", "spaces"]).optional(),
   spacePositions: z.array(z.string().trim()).optional(),
+  preferEmbossed: z.boolean().optional(),
   preferredSelfMute: z.boolean().optional(),
   preferredSelfDeaf: z.boolean().optional(),
   favoriteEmojis: z.array(z.string()).optional(),
