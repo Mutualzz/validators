@@ -87,4 +87,11 @@ export const validateSpaceUpdate = z.object({
         })
         .nullable()
         .optional(),
+
+    themeId: z
+        .string()
+        .trim()
+        .nullable()
+        .optional()
+        .transform((val) => (val === "" ? null : val)),
 });
