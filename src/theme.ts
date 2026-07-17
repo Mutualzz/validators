@@ -8,6 +8,25 @@ import { validateFontFamily } from "./fonts";
 import { emailRegex } from "./regexes";
 import { sanitizeName, validateColor, validateNonGradientColor, sanitizeDisplayText } from "./utils";
 
+const wallpaperPercent = z.number().min(0).max(200);
+const wallpaperOpacity = z.number().min(0).max(100);
+const wallpaperBlur = z.number().min(0).max(40);
+
+export const validateThemeWallpaper = z
+    .object({
+        brightness: wallpaperPercent.optional(),
+        saturation: wallpaperPercent.optional(),
+        overlay: wallpaperOpacity.optional(),
+        chrome: wallpaperOpacity.optional(),
+        content: wallpaperOpacity.optional(),
+        card: wallpaperOpacity.optional(),
+        popout: wallpaperOpacity.optional(),
+        composer: wallpaperOpacity.optional(),
+        blur: wallpaperBlur.optional(),
+    })
+    .nullable()
+    .optional();
+
 export const validateThemeCreate = z.object({
     name: z
         .string()
@@ -69,10 +88,25 @@ export const validateThemeCreate = z.object({
             muted: validateNonGradientColor,
         }),
     }),
+
+    wallpaper: validateThemeWallpaper,
 });
 
 export const validateThemeUpdateQuery = z.object({
     themeId: z.string({ error: "Theme ID is required" }),
 });
 
-export const validateThemeUpdateBody = validateThemeCreate.partial();
+export const validateThemeUpdateBody = validateThemeCreate
+    .partial()
+    .extend({
+        backgroundImage: z.string().trim().nullable().optional(),
+    });
+
+export const validateSpaceThemeParams = z.object({
+    spaceId: z.string({ error: "Invalid space ID" }).trim(),
+});
+
+export const validateSpaceThemeIdParams = z.object({
+    spaceId: z.string({ error: "Invalid space ID" }).trim(),
+    themeId: z.string({ error: "Theme ID is required" }).trim(),
+});
