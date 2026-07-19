@@ -4,6 +4,7 @@ export * from "./regexes";
 export * from "./fonts";
 export * from "./theme";
 export * from "./utils";
+export * from "./markdownColor";
 
 export * from "./channel";
 export * from "./common";

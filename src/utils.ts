@@ -14,11 +14,23 @@ export const sanitizeDisplayText = (input: string) =>
         .trim()
         .replace(/\s{2,}/g, " ");
 
-export const sanitizeMarkdownText = (input: string) =>
-    input
+export const sanitizeMarkdownText = (input: string) => {
+    const preserved: string[] = [];
+    const withPlaceholders = input.replace(/<a?:[^:]+:\d+>/g, (match) => {
+        const index = preserved.length;
+        preserved.push(match);
+        return `\uE000EMOJI${index}\uE001`;
+    });
+
+    const cleaned = withPlaceholders
         .replace(ZERO_WIDTH_CHARS, "")
         .replace(UNSAFE_MARKDOWN_CONTROL_CHARS, "")
         .replace(/[<>]/g, "");
+
+    return cleaned.replace(/\uE000EMOJI(\d+)\uE001/g, (_, index) => {
+        return preserved[Number(index)] ?? "";
+    });
+};
 
 // Sanitize username by trimming whitespace and replacing multiple spaces with a single space
 export const sanitizeName = (input: string, toLowerCase = true) => {
