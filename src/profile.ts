@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { validateFontFamily } from "./fonts";
-import { sanitizeMarkdownText } from "./utils";
+import { sanitizeDisplayText, sanitizeMarkdownText } from "./utils";
 
 const roundPercent = (value: number) =>
   Math.round(Math.min(100, Math.max(0, value)) * 100) / 100;
@@ -373,6 +373,13 @@ export const validateProfileUpdate = z.object({
     .string()
     .max(512, "Bio must be at most 512 characters")
     .transform((val) => sanitizeMarkdownText(val.trim()))
+    .nullable()
+    .optional()
+    .transform((val) => (val === "" ? null : val)),
+  pronouns: z
+    .string()
+    .max(32, "Pronouns must be at most 32 characters")
+    .transform((val) => sanitizeDisplayText(val))
     .nullable()
     .optional()
     .transform((val) => (val === "" ? null : val)),
