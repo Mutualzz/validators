@@ -7,6 +7,40 @@ import {
 import { emailRegex, pswdRegex } from "./regexes";
 import { sanitizeName, sanitizeDisplayText } from "./utils";
 
+const uiDensitySchema = z.enum(["compact", "default", "spacious"]);
+const messageDisplaySchema = z.enum(["default", "compact"]);
+const timestampFormatSchema = z.enum(["relative", "absolute"]);
+const dmPrivacySchema = z.enum(["everyone", "friends", "nobody"]);
+const profileVisibilitySchema = z.enum(["everyone", "friends", "nobody"]);
+
+export const validateExtendedSettingsUpdate = z
+  .object({
+    convertEmoticons: z.boolean().optional(),
+    uiDensity: uiDensitySchema.optional(),
+    messageDisplay: messageDisplaySchema.optional(),
+    chatFontScale: z.number().min(0.75).max(1.5).optional(),
+    timestampFormat: timestampFormatSchema.optional(),
+    showLinkEmbeds: z.boolean().optional(),
+    gifAutoplay: z.boolean().optional(),
+    revealAllSpoilers: z.boolean().optional(),
+    showTypingIndicators: z.boolean().optional(),
+    sendTypingIndicators: z.boolean().optional(),
+    replyWithMention: z.boolean().optional(),
+    quickReactionEmojis: z.array(z.string()).optional(),
+    showEmojiPicker: z.boolean().optional(),
+    showGifPicker: z.boolean().optional(),
+    showStickerPicker: z.boolean().optional(),
+    showMarkdownToolbar: z.boolean().optional(),
+    whoCanDm: dmPrivacySchema.optional(),
+    profileVisibility: profileVisibilitySchema.optional(),
+    reducedMotion: z.boolean().optional(),
+    highContrast: z.boolean().optional(),
+    defaultMemberListVisible: z.boolean().optional(),
+    shareRpcPresence: z.boolean().optional(),
+    autoCheckUpdates: z.boolean().optional(),
+  })
+  .partial();
+
 export const validateUsernameChange = z.object({
   username: z
     .string()
@@ -21,6 +55,9 @@ export const validateUsernameChange = z.object({
         error: "Please only use numbers, letters, underscores, or periods",
       },
     )
+    .refine((val) => /^[a-z0-9._]+$/.test(val), {
+      error: "Please only use numbers, letters, underscores, or periods",
+    })
     .refine((val) => !notAllowedNames.includes(val), {
       error: ({ input }) => `"${input}" is not allowed`,
     })
@@ -81,6 +118,7 @@ export const validateMeSettingsUpdate = z.object({
   pushMentions: z.boolean().optional(),
   shareActivity: z.boolean().optional(),
   shareRecentActivity: z.boolean().optional(),
+  extendedSettings: validateExtendedSettingsUpdate.optional(),
 });
 
 export const validatePreviousAvatarDelete = z.object({

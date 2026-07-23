@@ -24,3 +24,4 @@ export * from "./reports";
 export * from "./appeals";
 export * from "./support";
 export * from "./changelog";
+export * from "./notifications";

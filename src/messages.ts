@@ -33,6 +33,15 @@ export const validateMessageBodyPut = z.object({
     )
     .max(5)
     .optional(),
+  attachmentSpoilers: z
+    .preprocess(
+      (val) => {
+        if (val == null) return undefined;
+        const arr = Array.isArray(val) ? val : [val];
+        return arr.map((v) => v === true || v === "true");
+      },
+      z.array(z.boolean()).optional(),
+    ),
 });
 
 export const validateMessageBodyPatch = z.object({
