@@ -27,6 +27,9 @@ export const validateRegister = z
                     error: "Please only use numbers, letters, underscores, or periods",
                 },
             )
+            .refine((val) => /^[a-z0-9._]+$/.test(val), {
+                error: "Please only use numbers, letters, underscores, or periods",
+            })
             .refine((val) => !notAllowedNames.includes(val), {
                 error: ({ input }) => `"${input}" is not allowed`,
             })
@@ -75,9 +78,20 @@ export const validateRegister = z
         path: ["confirmPassword"],
     })
     .refine(
-        ({ dateOfBirth }) =>
-            new Date().getFullYear() - new Date(dateOfBirth).getFullYear() >=
-            13,
+        ({ dateOfBirth }) => {
+            const dob = new Date(dateOfBirth);
+            if (Number.isNaN(dob.getTime())) return false;
+            const now = new Date();
+            let age = now.getFullYear() - dob.getFullYear();
+            const monthDiff = now.getMonth() - dob.getMonth();
+            if (
+                monthDiff < 0 ||
+                (monthDiff === 0 && now.getDate() < dob.getDate())
+            ) {
+                age -= 1;
+            }
+            return age >= 13;
+        },
         {
             error: "You must be at least 13 years old to register",
             path: ["dateOfBirth"],
@@ -114,7 +128,15 @@ export const validateForgotPassword = z.object({
 export const validateResetPassword = z
     .object({
         token: z.string().trim(),
-        password: z.string().trim(),
+        password: z
+            .string()
+            .trim()
+            .min(8, {
+                error: "Password must be at least 8 characters long",
+            })
+            .regex(pswdRegex, {
+                error: "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+            }),
         confirmPassword: z.string().trim(),
     })
     .refine((data) => data.password === data.confirmPassword, {
