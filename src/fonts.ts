@@ -14,10 +14,10 @@ export function normalizeFontFamilyName(value: string | null | undefined) {
   if (isCustomFontRef(trimmed)) return trimmed;
 
   const match = trimmed.match(/'([^']+)'|"([^"]+)"/);
-  if (match?.[1] || match?.[2]) return (match[1] ?? match[2])!.trim();
+  if (match?.[1] || match?.[2]) return (match[1] ?? match[2]).trim();
 
   if (trimmed.includes(",")) {
-    return trimmed.split(",")[0]!.trim().replace(/^["']|["']$/g, "");
+    return trimmed.split(",")[0].trim().replace(/^["']|["']$/g, "");
   }
 
   return trimmed;

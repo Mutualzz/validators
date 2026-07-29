@@ -13,7 +13,7 @@ const timestampFormatSchema = z.enum(["relative", "absolute"]);
 const dmPrivacySchema = z.enum(["everyone", "friends", "nobody"]);
 const profileVisibilitySchema = z.enum(["everyone", "friends", "nobody"]);
 
-export const validateExtendedSettingsUpdate = z
+const clientPreferencesSchema = z
   .object({
     convertEmoticons: z.boolean().optional(),
     uiDensity: uiDensitySchema.optional(),
@@ -31,15 +31,13 @@ export const validateExtendedSettingsUpdate = z
     showGifPicker: z.boolean().optional(),
     showStickerPicker: z.boolean().optional(),
     showMarkdownToolbar: z.boolean().optional(),
-    whoCanDm: dmPrivacySchema.optional(),
-    profileVisibility: profileVisibilitySchema.optional(),
     reducedMotion: z.boolean().optional(),
     highContrast: z.boolean().optional(),
     defaultMemberListVisible: z.boolean().optional(),
-    shareRpcPresence: z.boolean().optional(),
-    autoCheckUpdates: z.boolean().optional(),
   })
   .partial();
+
+export const validateExtendedSettingsUpdate = clientPreferencesSchema;
 
 export const validateUsernameChange = z.object({
   username: z
@@ -102,24 +100,28 @@ export const validateMeUpdate = z.object({
     .optional(),
 });
 
-export const validateMeSettingsUpdate = z.object({
-  currentTheme: z.string().trim().nullable().optional(),
-  currentIcon: z.string().trim().nullable().optional(),
-  preferredMode: z.enum(["feed", "spaces"]).optional(),
-  spacePositions: z.array(z.string().trim()).optional(),
-  preferEmbossed: z.boolean().optional(),
-  preferredSelfMute: z.boolean().optional(),
-  preferredSelfDeaf: z.boolean().optional(),
-  favoriteEmojis: z.array(z.string()).optional(),
-  favoriteGifs: z.array(z.string()).optional(),
-  favoriteStickers: z.array(z.string()).optional(),
-  pushEnabled: z.boolean().optional(),
-  pushDirectMessages: z.boolean().optional(),
-  pushMentions: z.boolean().optional(),
-  shareActivity: z.boolean().optional(),
-  shareRecentActivity: z.boolean().optional(),
-  extendedSettings: validateExtendedSettingsUpdate.optional(),
-});
+export const validateMeSettingsUpdate = z
+  .object({
+    currentTheme: z.string().trim().nullable().optional(),
+    currentIcon: z.string().trim().nullable().optional(),
+    spacePositions: z.array(z.string().trim()).optional(),
+    preferEmbossed: z.boolean().optional(),
+    preferredSelfMute: z.boolean().optional(),
+    preferredSelfDeaf: z.boolean().optional(),
+    favoriteEmojis: z.array(z.string()).optional(),
+    favoriteGifs: z.array(z.string()).optional(),
+    favoriteStickers: z.array(z.string()).optional(),
+    pushEnabled: z.boolean().optional(),
+    pushDirectMessages: z.boolean().optional(),
+    pushMentions: z.boolean().optional(),
+    shareActivity: z.boolean().optional(),
+    shareRecentActivity: z.boolean().optional(),
+    whoCanDm: dmPrivacySchema.optional(),
+    profileVisibility: profileVisibilitySchema.optional(),
+    extendedSettings: clientPreferencesSchema.optional(),
+    clientPreferences: clientPreferencesSchema.optional(),
+  })
+  .merge(clientPreferencesSchema);
 
 export const validatePreviousAvatarDelete = z.object({
   avatar: z.string({ error: "Avatar hash is required" }),

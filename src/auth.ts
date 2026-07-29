@@ -143,3 +143,63 @@ export const validateResetPassword = z
         error: "Passwords do not match",
         path: ["confirmPassword"],
     });
+
+export const validateDiscordExchange = z.object({
+  code: z.string().trim().min(1),
+  state: z.string().trim().min(1),
+});
+
+export const validateDiscordComplete = z
+    .object({
+        pendingId: z.string().trim().min(1),
+        username: z
+            .string()
+            .min(2)
+            .max(32)
+            .toLowerCase()
+            .trim()
+            .transform((val) => sanitizeName(val.toLowerCase()))
+            .refine((val) => /^[a-z0-9._]+$/.test(val), {
+                error: "Please only use numbers, letters, underscores, or periods",
+            }),
+        globalName: z
+            .string()
+            .trim()
+            .min(1)
+            .max(32)
+            .transform(sanitizeDisplayText)
+            .optional(),
+        dateOfBirth: z.union([z.string(), z.date()]).transform((val) => {
+            if (val instanceof Date) return val.toDateString();
+            return new Date(val).toDateString();
+        }),
+    })
+    .refine(
+        ({ dateOfBirth }) => {
+            const dob = new Date(dateOfBirth);
+            if (Number.isNaN(dob.getTime())) return false;
+            const now = new Date();
+            let age = now.getFullYear() - dob.getFullYear();
+            const monthDiff = now.getMonth() - dob.getMonth();
+            if (
+                monthDiff < 0 ||
+                (monthDiff === 0 && now.getDate() < dob.getDate())
+            ) {
+                age -= 1;
+            }
+            return age >= 13;
+        },
+        {
+            error: "You must be at least 13 years old to register",
+            path: ["dateOfBirth"],
+        },
+    );
+
+export const validateDiscordImportPreview = z.object({
+    guildId: z.string().trim().min(1),
+});
+
+export const validateDiscordImportExecute = z.object({
+    guildId: z.string().trim().min(1),
+    spaceName: z.string().trim().min(1).max(100),
+});
