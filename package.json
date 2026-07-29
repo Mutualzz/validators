@@ -4,9 +4,11 @@
         "zod": "^4.4.3"
     },
     "devDependencies": {
+        "@mutualzz/eslint-config": "workspace:*",
         "@mutualzz/types": "workspace:*",
         "@types/node": "^25.9.1",
-        "bunchee": "^6.10.0"
+        "bunchee": "^6.10.0",
+        "eslint": "^10.8.0"
     },
     "exports": {
         ".": {
@@ -22,7 +24,8 @@
     "scripts": {
         "build": "pnpm typecheck && bunchee",
         "dev": "bunchee --watch",
-        "typecheck": "tsc --noEmit"
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint src"
     },
     "types": "./dist/index.d.ts"
 }

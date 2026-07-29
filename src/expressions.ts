@@ -5,7 +5,7 @@ const UNSAFE_NAME_CHARS = /[\u0000-\u001F\u007F<>\\]/g;
 export const sanitizeEmojiName = (val: string) =>
   val
     .toLowerCase()
-    .replace(/[\s.\-]+/g, "_")
+    .replace(/[\s.-]+/g, "_")
     .replace(/[^a-z0-9_]/g, "")
     .replace(/_{2,}/g, "_")
     .replace(/^_+|_+$/g, "");

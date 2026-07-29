@@ -12,6 +12,7 @@ export * from "./invites";
 export * from "./me";
 export * from "./members";
 export * from "./messages";
+export * from "./messageSearch";
 export * from "./reactions";
 export * from "./space";
 export * from "./staff";
