@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 
 export const validateReactionEmojiBody = z.object({
   emoji: z.discriminatedUnion("type", [
@@ -14,12 +15,12 @@ export const validateReactionEmojiBody = z.object({
 });
 
 export const validateReactionParams = z.object({
-  channelId: z.string({ error: "Invalid Channel ID" }),
-  messageId: z.string({ error: "Invalid Message ID" }),
+  channelId: snowflake("Invalid Channel ID"),
+  messageId: snowflake("Invalid Message ID"),
 });
 
 export const validateReactionUserParams = validateReactionParams.extend({
-  userId: z.string({ error: "Invalid User ID" }),
+  userId: snowflake("Invalid User ID"),
 });
 
 export const validateReactionUsersQuery = z.object({

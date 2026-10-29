@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 
 const imageMimeType = z.preprocess(
     (val) => (val === "image/jpg" ? "image/jpeg" : val),
@@ -143,5 +144,5 @@ export function fontExtFromFile(file: { originalname: string }): FontExt {
 }
 
 export const validateSpaceParam = z.object({
-    spaceId: z.string({ error: "Invalid space ID" }).trim(),
+    spaceId: snowflake("Invalid space ID"),
 });

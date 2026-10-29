@@ -1,8 +1,9 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 import { sanitizeDisplayText } from "./utils";
 
 export const validateMembersGetAllParams = z.object({
-    spaceId: z.string({ error: "Invalid space ID" }).trim(),
+    spaceId: snowflake("Invalid space ID"),
 });
 
 export const validateMembersGetAllQuery = z.object({
@@ -18,14 +19,14 @@ export const validateMembersGetAllQuery = z.object({
 });
 
 export const validateMembersActionParams = z.object({
-    spaceId: z.string({ error: "Invalid space ID" }),
-    userId: z.string({ error: "Invalid user ID" }),
+    spaceId: snowflake("Invalid space ID"),
+    userId: snowflake("Invalid user ID"),
 });
 
 export const validateMembersAddParams = validateMembersGetAllParams;
 
 export const validateMembersAddBody = z.object({
-    channelId: z.string({ error: "Channel ID is required" }).trim(),
+    channelId: snowflake("Channel ID is required"),
     code: z.string({ error: "Invitation code is required" }).trim(),
 });
 
@@ -51,7 +52,7 @@ export const validateMemberVoiceModerationBody = z
         spaceDeaf: z.boolean().optional(),
         spaceMute: z.boolean().optional(),
         disconnect: z.boolean().optional(),
-        channelId: z.string({ error: "Invalid channel ID" }).trim().optional(),
+        channelId: snowflake("Invalid channel ID").optional(),
     })
     .refine(
         (body) => !(body.disconnect && body.channelId),

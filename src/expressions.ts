@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 
 const UNSAFE_NAME_CHARS = /[\u0000-\u001F\u007F<>\\]/g;
 
@@ -53,7 +54,7 @@ export const parseExpressionName = (type: string | number, name: string) => {
 
 export const validateExpressionPutBody = z
   .object({
-    spaceId: z.string().trim().optional(),
+    spaceId: snowflake().optional(),
 
     name: z.string().trim(),
 
@@ -94,5 +95,5 @@ export const validateExpressionPatchBody = (type: string | number) =>
     }));
 
 export const validateExpressionParams = z.object({
-  expressionId: z.string().trim(),
+  expressionId: snowflake(),
 });

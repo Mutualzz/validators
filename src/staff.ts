@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 import {
     disallowedNameSubstrings,
     invisibleCharsRegex,
@@ -8,7 +9,7 @@ import { emailRegex } from "./regexes";
 import { sanitizeDisplayText, sanitizeName } from "./utils";
 
 export const validateStaffUserParams = z.object({
-    userId: z.string({ error: "Invalid user ID" }).trim(),
+    userId: snowflake("Invalid user ID"),
 });
 
 const staffReason = z
@@ -120,7 +121,7 @@ export const validateStaffActionsQuery = z.object({
 });
 
 export const validateStaffSetFlagParams = z.object({
-    userId: z.string({ error: "Invalid user ID" }).trim(),
+    userId: snowflake("Invalid user ID"),
     flag: z.string({ error: "Invalid flag" }).trim(),
 });
 
@@ -130,7 +131,7 @@ export const validateStaffSetFlagBody = z.object({
 });
 
 export const validateStaffSessionParams = z.object({
-    userId: z.string({ error: "Invalid user ID" }).trim(),
+    userId: snowflake("Invalid user ID"),
     sessionId: z.string({ error: "Invalid session ID" }).trim(),
 });
 
@@ -220,7 +221,7 @@ export const validateStaffCreateChangelogBody = z
     });
 
 export const validateStaffChangelogParams = z.object({
-    changelogId: z.string({ error: "Invalid changelog ID" }).trim(),
+    changelogId: snowflake("Invalid changelog ID"),
 });
 
 export const validateStaffChangelogsQuery = z.object({

@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 import { sanitizeDisplayText } from "./utils";
 
 export const supportTicketCategories = [
@@ -59,7 +60,7 @@ export const validateSupportTicketsQuery = z.object({
 });
 
 export const validateSupportTicketParams = z.object({
-    ticketId: z.string({ error: "Invalid ticket ID" }).trim(),
+    ticketId: snowflake("Invalid ticket ID"),
 });
 
 export const validateCreateSupportMessageBody = z.object({
@@ -85,7 +86,7 @@ export const validateStaffSupportTicketsQuery = z.object({
 export const validateStaffSupportTicketUpdateBody = z
     .object({
         status: z.enum(supportTicketStatuses).optional(),
-        assignedToId: z.string().trim().nullable().optional(),
+        assignedToId: snowflake().nullable().optional(),
     })
     .refine(
         (data) => data.status !== undefined || data.assignedToId !== undefined,

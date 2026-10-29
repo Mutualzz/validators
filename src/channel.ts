@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 import { emailRegex } from "./regexes";
 import { sanitizeDisplayText } from "./utils";
 
@@ -29,7 +30,7 @@ const channelTopicSchema = z
 
 // GET
 export const validateChannelParamsGet = z.object({
-  channelId: z.string({ error: "Channel ID is required" }),
+  channelId: snowflake("Channel ID is required"),
 });
 
 // POST
@@ -39,8 +40,8 @@ export const validateChannelBodyCreate = z.object({
     error: "Invalid channel type provided",
   }),
 
-  parentId: z.string().optional().nullable(),
-  spaceId: z.string(),
+  parentId: snowflake().optional().nullable(),
+  spaceId: snowflake(),
 
   crop: z
     .object({
@@ -64,7 +65,7 @@ export const validateChannelBodyCreate = z.object({
 
 // PATCH
 export const validateChannelParamsUpdate = z.object({
-  channelId: z.string({ error: "Channel ID is required" }),
+  channelId: snowflake("Channel ID is required"),
 });
 
 export const validateChannelBodyUpdate = z.object({
@@ -72,7 +73,7 @@ export const validateChannelBodyUpdate = z.object({
 
   topic: z.union([channelTopicSchema, z.null()]).optional(),
 
-  parentId: z.string().nullable().optional(),
+  parentId: snowflake().nullable().optional(),
 
   nsfw: z.boolean().optional(),
 
@@ -82,7 +83,7 @@ export const validateChannelBodyUpdate = z.object({
     .nonnegative()
     .optional(),
 
-  spaceId: z.string().optional(),
+  spaceId: snowflake().optional(),
 
   crop: z
     .object({
@@ -105,7 +106,7 @@ export const validateChannelBodyUpdate = z.object({
 });
 
 export const validateChannelBulkBodyPatch = z.object({
-  spaceId: z.string(),
+  spaceId: snowflake(),
   channels: z.array(
     validateChannelBodyUpdate.extend({
       id: z.string({ error: "Invalid Channel ID" }),
@@ -115,7 +116,7 @@ export const validateChannelBulkBodyPatch = z.object({
 
 // DELETE
 export const validateChannelParamsDelete = z.object({
-  channelId: z.string({ error: "Invalid Channel ID" }),
+  channelId: snowflake("Invalid Channel ID"),
 });
 
 export const validateChannelQueryDelete = z.object({
@@ -124,5 +125,5 @@ export const validateChannelQueryDelete = z.object({
     .refine((val) => val === "true" || val === "false")
     .transform((val) => val === "true")
     .optional(),
-  spaceId: z.string().optional(),
+  spaceId: snowflake().optional(),
 });

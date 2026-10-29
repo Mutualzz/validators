@@ -1,16 +1,17 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 
 // GET
 export const validateInviteParamsGet = z.object({
-    spaceId: z.string({ error: "Space ID is required" }),
+    spaceId: snowflake("Space ID is required"),
 });
 
 export const validateInviteBodyPost = z.object({
-    channelId: z.string(),
+    channelId: snowflake(),
 });
 
 export const validateInviteParamsCode = z.object({
-    spaceId: z.string(),
+    spaceId: snowflake(),
     code: z.string().min(1),
 });
 

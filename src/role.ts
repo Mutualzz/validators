@@ -1,9 +1,10 @@
 import { validateNonGradientColor, sanitizeDisplayText } from "./utils";
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 
 export const validateRoleParams = z.object({
-    spaceId: z.string({ error: "Invalid space ID" }).trim(),
-    roleId: z.string({ error: "Invalid role ID" }).trim(),
+    spaceId: snowflake("Invalid space ID"),
+    roleId: snowflake("Invalid role ID"),
 });
 
 export const validateRoleUpdate = z.object({
@@ -31,7 +32,7 @@ export const validateRoleUpdate = z.object({
 });
 
 export const validateRoleMemberParams = z.object({
-    spaceId: z.string({ error: "Invalid space ID" }).trim(),
-    userId: z.string({ error: "Invalid user ID" }).trim(),
-    roleId: z.string({ error: "Invalid role ID" }).trim(),
+    spaceId: snowflake("Invalid space ID"),
+    userId: snowflake("Invalid user ID"),
+    roleId: snowflake("Invalid role ID"),
 });

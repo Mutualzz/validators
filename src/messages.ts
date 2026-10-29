@@ -1,13 +1,23 @@
 import z from "zod";
+import { zLimit } from "./reusables/pagination";
+import { snowflake, zSnowflake } from "./reusables/snowflake";
+
+// GET
+export const messagesGetQuery = z.object({
+  around: zSnowflake.optional(),
+  before: zSnowflake.optional(),
+  after: zSnowflake.optional(),
+  limit: zLimit(50, 100),
+});
 
 // PUT
 export const validateMessageParamsPut = z.object({
-  channelId: z.string({ error: "Invalid Channel ID" }),
+  channelId: snowflake("Invalid Channel ID"),
 });
 
 export const validateMessageParamsModify = z.object({
-  channelId: z.string({ error: "Invalid Channel ID" }),
-  messageId: z.string({ error: "Invalid Message ID" }),
+  channelId: snowflake("Invalid Channel ID"),
+  messageId: snowflake("Invalid Message ID"),
 });
 
 export const validateMessageBodyPut = z.object({
@@ -17,13 +27,13 @@ export const validateMessageBodyPut = z.object({
     .trim()
     .optional(),
   nonce: z.string().optional(),
-  repliedToId: z.string({ error: "Invalid replied to message ID" }).optional(),
+  repliedToId: snowflake("Invalid replied to message ID").optional(),
   mentionReply: z.boolean().optional(),
   expressionIds: z
-    .array(z.string({ error: "Invalid expression ID" }))
+    .array(snowflake("Invalid expression ID"))
     .max(3, "You can only attach up to 3 stickers")
     .optional(),
-  sharedPostId: z.string({ error: "Invalid Post ID" }).optional(),
+  sharedPostId: snowflake("Invalid Post ID").optional(),
   codedLinks: z
     .array(
       z.object({
@@ -53,6 +63,6 @@ export const validateMessageBodyPatch = z.object({
 });
 
 export const validateMessageAckParams = z.object({
-  channelId: z.string({ error: "Invalid Channel ID" }),
-  messageId: z.string({ error: "Invalid Message ID" }),
+  channelId: snowflake("Invalid Channel ID"),
+  messageId: snowflake("Invalid Message ID"),
 });

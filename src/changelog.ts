@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 
 const semverString = z
   .string()
@@ -11,5 +12,5 @@ export const validateChangelogUnseenQuery = z.object({
 });
 
 export const validateChangelogParams = z.object({
-  changelogId: z.string({ error: "Invalid changelog ID" }).trim(),
+  changelogId: snowflake("Invalid changelog ID"),
 });

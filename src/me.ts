@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 import {
   disallowedNameSubstrings,
   invisibleCharsRegex,
@@ -161,7 +162,7 @@ export const validateChangePassword = z
   });
 
 export const validateDmChannelCreateBody = z.object({
-  recipientId: z.string().trim(),
+  recipientId: snowflake(),
 });
 
 export const validateRelationshipRequest = z.object({

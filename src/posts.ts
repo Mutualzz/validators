@@ -1,7 +1,26 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
+import {
+  cursorPaginationQuery,
+  zLimit,
+  zPage,
+} from "./reusables/pagination";
+
+export const postsFeedQuery = cursorPaginationQuery(25, 50);
+
+export const postsForYouQuery = z.object({
+  page: zPage,
+  limit: zLimit(25, 50),
+});
+
+export const postsScheduledQuery = z.object({
+  limit: zLimit(50, 100),
+});
+
+export const postCommentsGetQuery = cursorPaginationQuery(25, 50);
 
 export const validatePostParams = z.object({
-  postId: z.string({ error: "Invalid Post ID" }),
+  postId: snowflake("Invalid Post ID"),
 });
 
 export const validatePostBodyPut = z.object({
@@ -12,7 +31,7 @@ export const validatePostBodyPut = z.object({
     .optional(),
   scheduledFor: z.string({ error: "Invalid scheduled date" }).optional(),
   expressionIds: z
-    .array(z.string({ error: "Invalid expression ID" }))
+    .array(snowflake("Invalid expression ID"))
     .max(3, "You can only attach up to 3 stickers")
     .optional(),
 });
@@ -30,8 +49,8 @@ export const validatePostBodyPatch = z.object({
 });
 
 export const validatePostCommentParams = z.object({
-  postId: z.string({ error: "Invalid Post ID" }),
-  commentId: z.string({ error: "Invalid Comment ID" }),
+  postId: snowflake("Invalid Post ID"),
+  commentId: snowflake("Invalid Comment ID"),
 });
 
 export const validatePostCommentBodyPut = z.object({
@@ -41,10 +60,10 @@ export const validatePostCommentBodyPut = z.object({
     .trim()
     .optional(),
   expressionIds: z
-    .array(z.string({ error: "Invalid expression ID" }))
+    .array(snowflake("Invalid expression ID"))
     .max(3, "You can only attach up to 3 stickers")
     .optional(),
-  repliedToId: z.string({ error: "Invalid comment ID" }).optional(),
+  repliedToId: snowflake("Invalid comment ID").optional(),
 });
 
 export const validatePostCommentBodyPatch = z.object({

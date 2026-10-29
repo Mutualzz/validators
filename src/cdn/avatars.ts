@@ -1,14 +1,16 @@
 import z from "zod";
+import { snowflake } from "../reusables/snowflake";
 import { zAnimated } from "../reusables/animated";
 import { zFormat } from "../reusables/format";
+import { zSize } from "../reusables/size";
 
 export const avatarsGetParams = z.object({
-  userId: z.string({ error: "Invalid user ID" }),
+  userId: snowflake("Invalid user ID"),
   avatar: z.string({ error: "Invalid avatar hash" }),
 });
 
 export const avatarsGetQuery = z.object({
-  format: zFormat.default("png"),
-  size: z.number().optional(),
+  format: zFormat.optional(),
+  size: zSize.optional(),
   animated: zAnimated.optional(),
 });

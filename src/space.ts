@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 import { emailRegex } from "./regexes";
 import { sanitizeDisplayText } from "./utils";
 
@@ -37,7 +38,7 @@ export const validateSpaceCreate = z.object({
 });
 
 export const validateSpaceDeleteParams = z.object({
-    spaceId: z.string({ error: "Invalid space ID" }).trim(),
+    spaceId: snowflake("Invalid space ID"),
 });
 
 export const validateSpaceGetBulkQuery = z.object({
@@ -55,7 +56,7 @@ export const validateSpaceGetBulkQuery = z.object({
 export const validateSpaceGetOneParams = validateSpaceDeleteParams;
 
 export const validateSpaceUpdateParams = z.object({
-    spaceId: z.string({ error: "Invalid space ID" }).trim(),
+    spaceId: snowflake("Invalid space ID"),
 });
 
 export const validateSpaceUpdate = z.object({

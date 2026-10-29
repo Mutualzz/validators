@@ -3,3 +3,7 @@ export * from "./attachments";
 export * from "./avatars";
 export * from "./channels";
 export * from "./defaultAvatars";
+export * from "./expressions";
+export * from "./profiles";
+export * from "./spaces";
+export * from "./themes";

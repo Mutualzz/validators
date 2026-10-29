@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 import { sanitizeDisplayText } from "./utils";
 
 export const reportTargetTypes = [
@@ -29,7 +30,7 @@ export const reportStatuses = [
 
 export const validateCreateReportBody = z.object({
     targetType: z.enum(reportTargetTypes, { error: "Invalid target type" }),
-    targetId: z.string({ error: "Invalid target ID" }).trim(),
+    targetId: snowflake("Invalid target ID"),
     reason: z.enum(reportReasons, { error: "Invalid reason" }),
     description: z
         .string()
@@ -49,7 +50,7 @@ export const validateStaffReportsQuery = z.object({
 });
 
 export const validateStaffReportParams = z.object({
-    reportId: z.string({ error: "Invalid report ID" }).trim(),
+    reportId: snowflake("Invalid report ID"),
 });
 
 export const validateStaffReportUpdateBody = z.object({

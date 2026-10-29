@@ -26,6 +26,15 @@ export * from "./appeals";
 export * from "./support";
 export * from "./changelog";
 export * from "./notifications";
+export * from "./bridges";
+export * from "./connections";
+export * from "./minecraft";
+export * from "./voiceServer";
+
+export * from "./reusables/multipart";
 
 // CDN
 export * from "./cdn";
+
+// Gateway
+export * from "./gateway";

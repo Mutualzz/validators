@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { snowflake } from "./reusables/snowflake";
 import {
     disallowedNameSubstrings,
     invisibleCharsRegex,
@@ -196,10 +197,10 @@ export const validateDiscordComplete = z
     );
 
 export const validateDiscordImportPreview = z.object({
-    guildId: z.string().trim().min(1),
+    guildId: snowflake(),
 });
 
 export const validateDiscordImportExecute = z.object({
-    guildId: z.string().trim().min(1),
+    guildId: snowflake(),
     spaceName: z.string().trim().min(1).max(100),
 });

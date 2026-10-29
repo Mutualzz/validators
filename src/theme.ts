@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { snowflake } from "./reusables/snowflake";
 import {
     disallowedNameSubstrings,
     invisibleCharsRegex,
@@ -93,7 +94,7 @@ export const validateThemeCreate = z.object({
 });
 
 export const validateThemeUpdateQuery = z.object({
-    themeId: z.string({ error: "Theme ID is required" }),
+    themeId: snowflake("Theme ID is required"),
 });
 
 export const validateThemeUpdateBody = validateThemeCreate
@@ -103,10 +104,10 @@ export const validateThemeUpdateBody = validateThemeCreate
     });
 
 export const validateSpaceThemeParams = z.object({
-    spaceId: z.string({ error: "Invalid space ID" }).trim(),
+    spaceId: snowflake("Invalid space ID"),
 });
 
 export const validateSpaceThemeIdParams = z.object({
-    spaceId: z.string({ error: "Invalid space ID" }).trim(),
-    themeId: z.string({ error: "Theme ID is required" }).trim(),
+    spaceId: snowflake("Invalid space ID"),
+    themeId: snowflake("Theme ID is required"),
 });

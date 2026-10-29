@@ -1,4 +1,5 @@
 import z from "zod";
+import { snowflake } from "./reusables/snowflake";
 import { sanitizeDisplayText } from "./utils";
 
 export const appealStatuses = ["pending", "accepted", "rejected"] as const;
@@ -24,7 +25,7 @@ export const validateStaffAppealsQuery = z.object({
 });
 
 export const validateStaffAppealParams = z.object({
-    appealId: z.string({ error: "Invalid appeal ID" }).trim(),
+    appealId: snowflake("Invalid appeal ID"),
 });
 
 export const validateStaffAppealUpdateBody = z.object({

@@ -1,14 +1,16 @@
 import z from "zod";
+import { snowflake } from "../reusables/snowflake";
 import { zAnimated } from "../reusables/animated";
 import { zFormat } from "../reusables/format";
+import { zSize } from "../reusables/size";
 
 export const channelsGetIconParams = z.object({
-  channelId: z.string({ error: "Invalid channel ID" }),
+  channelId: snowflake("Invalid channel ID"),
   icon: z.string({ error: "Invalid icon hash" }),
 });
 
 export const channelsGetIconQuery = z.object({
-  format: zFormat.default("png"),
-  size: z.string().optional(),
+  format: zFormat.optional(),
+  size: zSize.optional(),
   animated: zAnimated.optional(),
 });

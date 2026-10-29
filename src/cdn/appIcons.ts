@@ -1,5 +1,6 @@
 import z from "zod";
 import { zFormat } from "../reusables/format";
+import { zSize } from "../reusables/size";
 
 export const appIconsGetParams = z.object({
   id: z
@@ -10,5 +11,5 @@ export const appIconsGetParams = z.object({
 
 export const appIconsGetQuery = z.object({
   format: zFormat.default("png"),
-  size: z.number().optional(),
+  size: zSize.optional(),
 });
