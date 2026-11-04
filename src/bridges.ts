@@ -47,6 +47,10 @@ export const bridgeMemberParams = z.object({
   userId: zSnowflake,
 });
 
+export const bridgeInventoryParams = z.object({
+  minecraftUuid: z.guid().transform((uuid) => uuid.toLowerCase()),
+});
+
 export const bridgeServerParams = z.object({
   serverId: z
     .string()
