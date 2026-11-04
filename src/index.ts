@@ -30,6 +30,7 @@ export * from "./bridges";
 export * from "./connections";
 export * from "./minecraft";
 export * from "./voiceServer";
+export * from "./applications";
 
 export * from "./reusables/multipart";
 
