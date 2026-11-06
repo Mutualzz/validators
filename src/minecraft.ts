@@ -16,9 +16,21 @@ const minecraftName = z
   .transform((name) => name.slice(0, MAX_MINECRAFT_NAME))
   .catch("Unknown");
 
+const editSlot = {
+  container: z.enum(["inventory", "enderChest"]),
+  slot: z.number().int().min(0).max(40),
+};
+
+const isValidSlot = (ref: { container: string; slot: number }) =>
+  ref.container === "inventory" || ref.slot <= 26;
+
+const textureKey = z.string().regex(/^[a-z0-9_]{1,64}$/);
+
 export const minecraftIdentifyData = z.object({
   token: z.string().min(1).max(512),
   serverId: z.string().min(1).max(MAX_SERVER_ID),
+  remoteModeration: z.boolean().catch(false),
+  remoteInventoryEdit: z.boolean().catch(false),
 });
 
 export const minecraftChatData = z.object({
@@ -62,6 +74,9 @@ const minecraftItemSlot = (maxSlot: number) =>
     type: z.string().min(1).max(128),
     amount: z.number().int().min(1).max(99),
     data: z.base64().max(MAX_MINECRAFT_ITEM_BYTES).optional(),
+    enchanted: z.boolean().optional(),
+    color: z.number().int().min(0).max(0xffffff).optional(),
+    trim: z.object({ pattern: textureKey, material: textureKey }).optional(),
   });
 
 export const minecraftInventoryData = minecraftPlayerData.extend({
@@ -94,4 +109,66 @@ export const minecraftAudioControl = z.object({
   selfDeaf: z.boolean().catch(false),
 });
 
+export const minecraftModerationResultData = z.object({
+  requestId: z.string().min(1).max(64),
+  ok: z.boolean(),
+  message: z
+    .string()
+    .transform((message) => message.slice(0, 300))
+    .catch(""),
+});
+
+export const bridgeInventoryEditOp = z
+  .discriminatedUnion("kind", [
+    z.object({ kind: z.literal("remove"), ...editSlot }),
+    z.object({
+      kind: z.literal("amount"),
+      ...editSlot,
+      amount: z.number().int().min(1).max(99),
+    }),
+    z.object({
+      kind: z.literal("give"),
+      ...editSlot,
+      type: z.string().regex(/^minecraft:[a-z0-9_]{1,64}$/),
+      amount: z.number().int().min(1).max(99),
+    }),
+    z.object({
+      kind: z.literal("move"),
+      from: z.object(editSlot),
+      to: z.object(editSlot),
+    }),
+  ])
+  .refine(
+    (op) =>
+      op.kind === "move"
+        ? isValidSlot(op.from) && isValidSlot(op.to)
+        : isValidSlot(op),
+    { error: "Invalid slot" },
+  );
+
+export const minecraftInventoryEditResultsData = z.object({
+  batchId: z.string().min(1).max(64),
+  retry: z.boolean().catch(false),
+  results: z
+    .array(
+      z.object({
+        editId: z.string().regex(/^\d{1,20}$/),
+        ok: z.boolean(),
+        message: z
+          .string()
+          .transform((message) => message.slice(0, 300))
+          .catch(""),
+      }),
+    )
+    .max(100),
+  inventory: minecraftInventoryData.optional(),
+});
+
 export type MinecraftInventoryData = z.infer<typeof minecraftInventoryData>;
+export type InventoryEditOp = z.infer<typeof bridgeInventoryEditOp>;
+export interface InventorySlotIntent {
+  type: string;
+  data?: string;
+}
+
+export type InventoryEditExpected = Record<string, InventorySlotIntent | null>;

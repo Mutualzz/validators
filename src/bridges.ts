@@ -5,9 +5,11 @@ import { zSnowflake } from "./reusables/snowflake";
 
 const NAME_ERROR = "Name must be 1–64 characters";
 const SERVER_ID_ERROR = "serverId must be letters, numbers, _ or -";
+const DISCORD_BIND_ERROR = "serverId, guildId, and channelId are required";
+const VOICE_BIND_ERROR = "serverId and channelId are required";
 
-// Plugin server IDs come from the admin's config.yml, so this is generous
 export const MAX_SERVER_ID = 128;
+export const MAX_BRIDGE_MEMBERS_PAGE = 50;
 
 const sanitizeSlug = (value: string) =>
   value
@@ -51,6 +53,10 @@ export const bridgeInventoryParams = z.object({
   minecraftUuid: z.guid().transform((uuid) => uuid.toLowerCase()),
 });
 
+export const bridgeModerationBody = z.object({
+  reason: z.string().trim().max(200).optional(),
+});
+
 export const bridgeServerParams = z.object({
   serverId: z
     .string()
@@ -60,7 +66,6 @@ export const bridgeServerParams = z.object({
 });
 
 export const bridgeCreateBody = z.object({
-  // Missing name falls back to "<space> Bridge" in the controller
   name: bridgeName.nullish(),
   serverId: serverSlug.nullish(),
   displayName: z.string().trim().max(64).nullish(),
@@ -97,7 +102,6 @@ export const bridgeAckBody = z.object({
 });
 
 export const bridgeRotateTokenBody = z.object({
-  // Only used to prefill the plugin config, so junk is ignored
   serverId: z
     .string()
     .max(MAX_SERVER_ID)
@@ -105,8 +109,6 @@ export const bridgeRotateTokenBody = z.object({
     .optional()
     .catch(undefined),
 });
-
-const DISCORD_BIND_ERROR = "serverId, guildId, and channelId are required";
 
 export const bridgeDiscordBindBody = z.object(
   {
@@ -120,8 +122,6 @@ export const bridgeDiscordBindBody = z.object(
   },
   { error: DISCORD_BIND_ERROR },
 );
-
-const VOICE_BIND_ERROR = "serverId and channelId are required";
 
 export const bridgeVoiceBindBody = z.object(
   {
@@ -177,4 +177,22 @@ export const bridgeMessagesListQuery = z.object({
   limit: z.coerce.number().int().optional().catch(undefined),
   // A message sourceKey, not a snowflake
   before: z.string().max(256).optional().catch(undefined),
+});
+
+export const bridgeMembersListQuery = z.object({
+  limit: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(MAX_BRIDGE_MEMBERS_PAGE)
+    .catch(MAX_BRIDGE_MEMBERS_PAGE),
+  offset: z.coerce.number().int().min(0).max(100_000).catch(0),
+  q: z.string().trim().max(64).optional().catch(undefined),
+});
+
+export const bridgeKnownPlayersQuery = bridgeMembersListQuery.extend({
+  offline: z
+    .enum(["true", "false"])
+    .transform((value) => value === "true")
+    .catch(false),
 });
