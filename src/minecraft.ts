@@ -48,6 +48,27 @@ export const minecraftPlayerData = z.object({
   name: minecraftName,
 });
 
+const advancementText = (maxLength: number) =>
+  z
+    .string()
+    .trim()
+    .transform((text) => text.slice(0, maxLength));
+
+export const minecraftAdvancementDetails = z.object({
+  title: advancementText(MAX_MINECRAFT_NAME * 4),
+  description: advancementText(MAX_MINECRAFT_EVENT_MESSAGE),
+  frame: z.enum(["task", "goal", "challenge"]).catch("task"),
+  icon: z
+    .string()
+    .regex(/^minecraft:[a-z0-9_]{1,64}$/)
+    .optional()
+    .catch(undefined),
+});
+
+export type MinecraftAdvancementDetails = z.infer<
+  typeof minecraftAdvancementDetails
+>;
+
 export const minecraftGameEventData = minecraftPlayerData.extend({
   kind: z.enum(["death", "advancement"]),
   message: z
@@ -55,6 +76,7 @@ export const minecraftGameEventData = minecraftPlayerData.extend({
     .trim()
     .min(1)
     .transform((message) => message.slice(0, MAX_MINECRAFT_EVENT_MESSAGE)),
+  advancement: minecraftAdvancementDetails.optional().catch(undefined),
 });
 
 export const minecraftServerStatusData = z.object({
