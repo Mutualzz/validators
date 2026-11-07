@@ -5,21 +5,6 @@ export const oauthStartBody = z.object({
   returnTo: z.string().trim().min(1).max(2048).optional().catch(undefined),
 });
 
-export const spotifyOAuthCompleteBody = z.object(
-  {
-    code: z.string().min(1, { error: "Missing code or state" }),
-    state: z.string().min(1, { error: "Missing code or state" }),
-  },
-  { error: "Missing code or state" },
-);
-
-export const spotifyPatchBody = z.object(
-  {
-    shareSpotify: z.boolean({ error: "shareSpotify is required" }),
-  },
-  { error: "shareSpotify is required" },
-);
-
 export const connectionOAuthCompleteBody = z.object(
   {
     // Checked against the provider list in the controller
