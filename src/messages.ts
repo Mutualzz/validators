@@ -1,4 +1,5 @@
 import z from "zod";
+import { scheduledForSchema } from "./gateway/scheduledMessages";
 import { zLimit } from "./reusables/pagination";
 import { snowflake, zSnowflake } from "./reusables/snowflake";
 
@@ -53,6 +54,10 @@ export const validateMessageBodyPut = z.object({
       z.array(z.boolean()).optional(),
     ),
 });
+
+export const validateScheduledMessageBodyPut = validateMessageBodyPut
+  .omit({ nonce: true })
+  .extend({ scheduledFor: scheduledForSchema });
 
 export const validateMessageBodyPatch = z.object({
   content: z
