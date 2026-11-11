@@ -200,7 +200,13 @@ export const validateDiscordImportPreview = z.object({
     guildId: snowflake(),
 });
 
+const discordImportSelection = z.array(snowflake()).max(1000).optional();
+
 export const validateDiscordImportExecute = z.object({
     guildId: snowflake(),
     spaceName: z.string().trim().min(1).max(100),
+    channelIds: discordImportSelection,
+    roleIds: discordImportSelection,
+    emojiIds: discordImportSelection,
+    stickerIds: discordImportSelection,
 });

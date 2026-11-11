@@ -17,12 +17,14 @@ const channelNameSchema = z
     error: "Name cannot be an email",
   });
 
+export const CHANNEL_TOPIC_MAX_LENGTH = 1024;
+
 const channelTopicSchema = z
   .string()
   .trim()
   .transform(sanitizeDisplayText)
-  .refine((val) => val.length <= 250, {
-    message: "Topic cannot be longer than 250 characters",
+  .refine((val) => val.length <= CHANNEL_TOPIC_MAX_LENGTH, {
+    message: `Topic cannot be longer than ${CHANNEL_TOPIC_MAX_LENGTH} characters`,
   })
   .refine((val) => !emailRegex.test(val), {
     error: "Topic cannot contain an email",
