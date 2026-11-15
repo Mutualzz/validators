@@ -10,4 +10,5 @@ export * from "./reminders";
 export * from "./scheduledMessages";
 export * from "./notifications";
 export * from "./mentions";
+export * from "./spaceMemberProfile";
 export * from "./discordImport";

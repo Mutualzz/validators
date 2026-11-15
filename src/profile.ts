@@ -1,5 +1,17 @@
+import {
+  DISPLAY_NAME_EFFECTS,
+  PROFILE_BACKGROUND_IMAGE_FITS,
+  PROFILE_BLOCK_BORDER_STYLES,
+  PROFILE_BLOCK_ENTRANCES,
+  PROFILE_BLOCK_SHADOWS,
+  PROFILE_BLOCK_TEXT_ALIGNS,
+  PROFILE_EMBED_KINDS,
+  PROFILE_GALLERY_LAYOUTS,
+  PROFILE_GALLERY_MAX_IMAGES,
+} from "@mutualzz/types";
 import { z } from "zod";
 import { validateFontFamily } from "./fonts";
+import { validateThemeCreate } from "./theme";
 import { sanitizeDisplayText, sanitizeMarkdownText } from "./utils";
 
 const roundPercent = (value: number) =>
@@ -26,6 +38,57 @@ const profileBackgroundColor = z
   )
   .transform((val) => (val === "" ? null : val));
 
+const profileTheme = z
+  .object({
+    sourceId: z.string().min(1).max(64),
+    name: z.string().max(64),
+    type: validateThemeCreate.shape.type,
+    style: validateThemeCreate.shape.style,
+    colors: validateThemeCreate.shape.colors,
+    typographyColors: validateThemeCreate.shape.typography.shape.colors,
+  })
+  .nullable()
+  .optional();
+
+const profileDisplayNameStyle = z
+  .object({
+    color: profileBackgroundColor,
+    font: validateFontFamily,
+    effect: z.enum(DISPLAY_NAME_EFFECTS).nullable().optional(),
+    effectColor: z
+      .string()
+      .regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, "Must be a hex color")
+      .nullable()
+      .optional(),
+  })
+  .nullable()
+  .optional();
+
+const profileBlockHexColor = z
+  .string()
+  .regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, "Must be a hex color")
+  .nullable()
+  .optional();
+
+const profileBlockAppearance = z
+  .object({
+    borderWidth: z.number().int().min(0).max(8).optional(),
+    borderStyle: z.enum(PROFILE_BLOCK_BORDER_STYLES).optional(),
+    borderColor: profileBlockHexColor,
+    shadow: z.enum(PROFILE_BLOCK_SHADOWS).nullable().optional(),
+    shadowColor: profileBlockHexColor,
+    opacity: z.number().int().min(20).max(100).optional(),
+    blur: z.number().int().min(0).max(20).optional(),
+    padding: z.number().int().min(0).max(32).optional(),
+    textAlign: z.enum(PROFILE_BLOCK_TEXT_ALIGNS).optional(),
+    font: validateFontFamily,
+    entrance: z.enum(PROFILE_BLOCK_ENTRANCES).optional(),
+    textEffect: z.enum(DISPLAY_NAME_EFFECTS).optional(),
+    textEffectColor: profileBlockHexColor,
+  })
+  .nullable()
+  .optional();
+
 const profileBlockBase = z.object({
   id: z.string().min(1),
   type: z.enum([
@@ -42,6 +105,10 @@ const profileBlockBase = z.object({
     "quote",
     "draw",
     "sticker",
+    "countdown",
+    "gallery",
+    "nowPlaying",
+    "embed",
   ]),
   x: percent,
   y: percent,
@@ -55,6 +122,12 @@ const profileBlockBase = z.object({
     .max(48, "Corner radius must be at most 48px")
     .optional(),
   backgroundColor: profileBackgroundColor,
+  locked: z.boolean().optional(),
+  hidden: z.boolean().optional(),
+  visibility: z.enum(["everyone", "friends", "nobody"]).optional(),
+  groupId: z.string().min(1).max(64).optional(),
+  rotation: z.number().int().min(-180).max(180).optional(),
+  appearance: profileBlockAppearance,
 });
 
 const profileHeaderBlock = profileBlockBase.extend({
@@ -118,6 +191,8 @@ const profileLinksBlock = profileBlockBase.extend({
 const profileActivityBlock = profileBlockBase.extend({
   type: z.literal("activity"),
   showCustomStatus: z.boolean().optional(),
+  showPlaying: z.boolean().optional(),
+  showListening: z.boolean().optional(),
 });
 
 const profileRolesBlock = profileBlockBase.extend({
@@ -166,6 +241,45 @@ const profileStickerBlock = profileBlockBase.extend({
   expressionId: z.string().trim().min(1).max(128),
 });
 
+const profileCountdownBlock = profileBlockBase.extend({
+  type: z.literal("countdown"),
+  targetAt: z
+    .string()
+    .max(40)
+    .refine((value) => !Number.isNaN(Date.parse(value)), "Invalid date"),
+  title: z.string().trim().max(80).nullable().optional(),
+});
+
+const profileEmbedBlock = profileBlockBase.extend({
+  type: z.literal("embed"),
+  kind: z.enum(PROFILE_EMBED_KINDS),
+  url: z
+    .string()
+    .max(2048)
+    .refine((value) => {
+      try {
+        return new URL(value).protocol === "https:";
+      } catch {
+        return false;
+      }
+    }, "Must be an https link")
+    .nullable()
+    .optional(),
+});
+
+const profileNowPlayingBlock = profileBlockBase.extend({
+  type: z.literal("nowPlaying"),
+  hideWhenIdle: z.boolean().optional(),
+});
+
+const profileGalleryBlock = profileBlockBase.extend({
+  type: z.literal("gallery"),
+  images: z
+    .array(z.object({ src: z.string().min(1).max(2048) }))
+    .max(PROFILE_GALLERY_MAX_IMAGES),
+  layout: z.enum(PROFILE_GALLERY_LAYOUTS).optional(),
+});
+
 export const validateProfileBlock = z.discriminatedUnion("type", [
   profileHeaderBlock,
   profileTextBlock,
@@ -180,6 +294,10 @@ export const validateProfileBlock = z.discriminatedUnion("type", [
   profileQuoteBlock,
   profileDrawBlock,
   profileStickerBlock,
+  profileCountdownBlock,
+  profileGalleryBlock,
+  profileNowPlayingBlock,
+  profileEmbedBlock,
 ]);
 
 const mobileProfileBlockBase = z.object({
@@ -342,15 +460,6 @@ export const validateMobileProfileBlock = z.discriminatedUnion("type", [
   mobileProfileStickerBlock,
 ]);
 
-const hexColor = z
-  .string()
-  .regex(
-    /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/,
-    "Invalid hex color",
-  )
-  .nullable()
-  .optional();
-
 const assetRef = z
   .string()
   .max(2048)
@@ -368,6 +477,10 @@ const assetRef = z
 export const validateProfileUpdate = z.object({
   backgroundColor: profileBackgroundColor,
   backgroundImage: assetRef,
+  backgroundImageFit: z
+    .enum(PROFILE_BACKGROUND_IMAGE_FITS)
+    .nullable()
+    .optional(),
   banner: assetRef,
   bio: z
     .string()
@@ -400,6 +513,8 @@ export const validateProfileUpdate = z.object({
   profileMusicTitle: z.string().max(200).nullable().optional(),
   profileMusicAuthorName: z.string().max(200).nullable().optional(),
   pageFontFamily: validateFontFamily,
+  theme: profileTheme,
+  displayNameStyle: profileDisplayNameStyle,
   blocks: z.array(validateProfileBlock).max(100).optional().default([]),
   mobileBlocks: z
     .array(validateMobileProfileBlock)
@@ -426,6 +541,10 @@ export const validateProfileMusicPreview = z.object({
     (val) => (Array.isArray(val) ? val[0] : val),
     z.string().trim().min(1).max(128),
   ),
+});
+
+export const validateProfileVersionDelete = z.object({
+  versionId: z.string().regex(/^\d{1,10}$/, { error: "Invalid version" }),
 });
 
 export const validateProfileGet = z.object({
