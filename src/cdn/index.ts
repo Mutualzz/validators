@@ -9,3 +9,4 @@ export * from "./external";
 export * from "./profiles";
 export * from "./spaces";
 export * from "./themes";
+export * from "./badges";

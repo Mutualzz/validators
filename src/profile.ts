@@ -64,6 +64,14 @@ const profileDisplayNameStyle = z
   .nullable()
   .optional();
 
+const profileBadgeSettings = z
+  .object({
+    order: z.array(z.string().max(32)).max(32),
+    hidden: z.array(z.string().max(32)).max(32),
+  })
+  .nullable()
+  .optional();
+
 const profileBlockHexColor = z
   .string()
   .regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, "Must be a hex color")
@@ -166,7 +174,7 @@ const profileMusicBlock = profileBlockBase.extend({
     .optional(),
   track: z
     .object({
-      source: z.enum(["itunes", "deezer"]),
+      source: z.enum(["itunes"]),
       id: z.string().min(1).max(128),
       name: z.string().min(1).max(300),
       artists: z.string().max(300),
@@ -376,7 +384,7 @@ const mobileProfileMusicBlock = mobileProfileBlockBase.extend({
     .optional(),
   track: z
     .object({
-      source: z.enum(["itunes", "deezer"]),
+      source: z.enum(["itunes"]),
       id: z.string().min(1).max(128),
       name: z.string().min(1).max(300),
       artists: z.string().max(300),
@@ -508,13 +516,14 @@ export const validateProfileUpdate = z.object({
   ),
   profileMusicTrackSource: z.preprocess(
     (val) => (Array.isArray(val) ? val[0] : val),
-    z.enum(["itunes", "deezer"]).nullable().optional(),
+    z.enum(["itunes"]).nullable().optional(),
   ),
   profileMusicTitle: z.string().max(200).nullable().optional(),
   profileMusicAuthorName: z.string().max(200).nullable().optional(),
   pageFontFamily: validateFontFamily,
   theme: profileTheme,
   displayNameStyle: profileDisplayNameStyle,
+  badgeSettings: profileBadgeSettings,
   blocks: z.array(validateProfileBlock).max(100).optional().default([]),
   mobileBlocks: z
     .array(validateMobileProfileBlock)
@@ -526,16 +535,12 @@ export const validateProfileUpdate = z.object({
 export const validateProfileMusicSearch = z.object({
   q: z.string().trim().min(1).max(100),
   limit: z.coerce.number().int().min(1).max(20).optional().default(10),
-  source: z.preprocess(
-    (val) => (Array.isArray(val) ? val[0] : val),
-    z.enum(["itunes", "deezer", "all"]).optional().default("all"),
-  ),
 });
 
 export const validateProfileMusicPreview = z.object({
   source: z.preprocess(
     (val) => (Array.isArray(val) ? val[0] : val),
-    z.enum(["itunes", "deezer"]),
+    z.enum(["itunes"]),
   ),
   id: z.preprocess(
     (val) => (Array.isArray(val) ? val[0] : val),
